@@ -76,6 +76,10 @@ namespace Stm32Common {
             return sz;
         }
 
+        uint8_t *getStart() {
+            return buffer + tail;
+        }
+
         void clear() {
             memset(buffer, 0, Size);
             head = tail = 0;
