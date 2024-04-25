@@ -6,6 +6,11 @@
 #ifndef LIBSMART_STM32COMMON_HELPER_HPP
 #define LIBSMART_STM32COMMON_HELPER_HPP
 
+#ifndef __cplusplus
+#define min(a, b) ((a)<(b)?(a):(b))
+#define max(a, b) ((a)>(b)?(a):(b))
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

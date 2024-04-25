@@ -7,10 +7,11 @@
 #define LIBSMART_STM32COMMON_STRINGBUFFER_HPP
 
 #include <cstddef>
+#include "Stream.hpp"
 
 namespace Stm32Common {
     template<size_t Size>
-    class StringBuffer {
+    class StringBuffer : public Stream {
 
     public:
         StringBuffer() : head(0), tail(0) {}
@@ -31,19 +32,24 @@ namespace Stm32Common {
             return head - tail;
         }
 
+        size_t write(const uint8_t c) override {
+            return write(&c, 1);
+        }
 
-        bool write(const char *str) {
+        size_t write(const char *str) override {
             return write(str, strlen(str));
         }
 
-        bool write(const void *in, size_t strlen) {
-            if (getRemainingSpace() < strlen) return false;
+        size_t write(const void *in, size_t strlen) {
+            if (getRemainingSpace() < strlen) return 0;
             memcpy(buffer + head, in, strlen);
             head += strlen;
-            return true;
+            return strlen;
         }
 
-        bool printf(const char *format, ...) {
+
+        size_t printf(const char *format, ...) PRINTF_OVERRIDE
+        {
             va_list args;
             va_start(args, format);
             auto ret = vprintf(format, args);
@@ -51,11 +57,18 @@ namespace Stm32Common {
             return ret;
         }
 
-        bool vprintf(const char *format, va_list args) {
+        size_t vprintf(const char *format, va_list args) PRINTF_OVERRIDE
+        {
             int len = vsnprintf(reinterpret_cast<char *>(buffer + head), getRemainingSpace(), format, args);
-            if (len < 0 || len >= getRemainingSpace()) return false;
+            if(len < 0) return 0;
+            len = std::min((size_t)len, getRemainingSpace());
             head += len;
-            return true;
+            return len;
+        }
+
+        int read() override {
+            if(tail == head) return -1;
+            return buffer[tail++];
         }
 
         size_t read(void *out, size_t size) {
@@ -76,13 +89,65 @@ namespace Stm32Common {
             return sz;
         }
 
-        uint8_t *getStart() {
+        int peek() override {
+            if(tail == head) return -1;
+            return buffer[tail];
+        }
+
+        uint8_t *getWritePointer() {
+            return buffer + head;
+        }
+
+        const uint8_t *getReadPointer() {
             return buffer + tail;
+        }
+
+        /**
+         * @deprecated
+         */
+        const uint8_t *getStart() {
+            return getReadPointer();
+        }
+
+        size_t add(size_t add) {
+            size_t sz = getRemainingSpace() < add ? getRemainingSpace() : add;
+            head += sz;
+            return sz;
+        }
+
+        size_t remove(size_t remove) {
+            size_t sz = getLength() < remove ? getLength() : remove;
+            tail += sz;
+            return sz;
         }
 
         void clear() {
             memset(buffer, 0, Size);
             head = tail = 0;
+        }
+
+
+        int available() override {
+            return getRemainingSpace();
+        }
+
+        size_t getWriteBuffer(uint8_t *&buffer) DIRECT_BUFFER_WRITE_OVERRIDE
+        {
+            buffer = getWritePointer();
+            return getRemainingSpace();
+        }
+
+        size_t setWrittenBytes(size_t size) DIRECT_BUFFER_WRITE_OVERRIDE
+        {
+            return add(size);
+        }
+
+        int availableForWrite() override {
+            return getRemainingSpace();
+        }
+
+        void flush() override {
+            //DOES NOTHING
         }
 
     protected:
@@ -92,8 +157,8 @@ namespace Stm32Common {
 
     private:
         uint8_t buffer[Size]{};
-        size_t head; // Index des nächsten freien Elements
-        size_t tail; // Index des nächsten zu lesenden Elements
+        volatile size_t head; // Index of the next free byte for write
+        volatile size_t tail; // Index of the next byte to read
 
     };
 }
