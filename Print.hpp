@@ -75,8 +75,11 @@ namespace Stm32Common {
      * availableForWrite() functions, which are used to write data to the underlying device.
      */
     class Print {
+    public:
+        virtual ~Print() = default;
+
     private:
-        int write_error;
+        int write_error = 0;
 
         /**
          * @brief Prints a number to the underlying device.
@@ -149,7 +152,7 @@ namespace Stm32Common {
          * @param data The byte to be written.
          * @return The number of bytes written. In most cases, this will be 1, unless there was an error during writing.
          */
-        virtual size_t write(uint8_t) = 0;
+        virtual size_t write(uint8_t data) = 0;
 
         /**
          * @brief Writes a null-terminated string to the underlying device.

@@ -27,8 +27,8 @@ namespace Stm32Common {
     // The rules set out here are used until either the first valid character is found
     // or a time out occurs due to lack of input.
     enum LookaheadMode {
-        SKIP_ALL,       // All invalid characters are ignored.
-        SKIP_NONE,      // Nothing is skipped, and the stream is not touched unless the first waiting character is valid.
+        SKIP_ALL, // All invalid characters are ignored.
+        SKIP_NONE, // Nothing is skipped, and the stream is not touched unless the first waiting character is valid.
         SKIP_WHITESPACE // Only tabs, spaces, line feeds & carriage returns are skipped.
     };
 
@@ -346,8 +346,8 @@ namespace Stm32Common {
         size_t readBytesUntil(char terminator, uint8_t *buffer, size_t length);
 
         //TODO: Arduino String functions to be added here
-//        String readString();
-//        String readStringUntil(char terminator);
+        //        String readString();
+        //        String readStringUntil(char terminator);
 
     protected:
         /**
@@ -375,9 +375,9 @@ namespace Stm32Common {
         float parseFloat(char ignore);
 
         struct MultiTarget {
-            const char *str;  // string you're searching for
-            size_t len;       // length of string you're searching for
-            size_t index;     // index used by the search routine.
+            const char *str; // string you're searching for
+            size_t len; // length of string you're searching for
+            size_t index; // index used by the search routine.
         };
 
         /**
