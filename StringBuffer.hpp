@@ -10,7 +10,11 @@
 #include "Stream.hpp"
 
 namespace Stm32Common {
-    template<size_t Size>
+
+    typedef size_t buf_size_t;
+    typedef int64_t buf_size_signed_t;
+
+    template<buf_size_t Size>
     class StringBuffer : public Stream {
     public:
         StringBuffer() { init(); };
@@ -23,33 +27,31 @@ namespace Stm32Common {
             return head == Size;
         }
 
-        [[nodiscard]] size_t getRemainingSpace() const {
+        [[nodiscard]] buf_size_t getRemainingSpace() const {
             return Size - head;
         }
 
-        [[nodiscard]] size_t getLength() const {
+        [[nodiscard]] buf_size_t getLength() const {
             return head - tail;
         }
 
-        size_t write(const uint8_t c) override {
+        buf_size_t write(const uint8_t c) override {
             return write(&c, 1);
         }
 
-        size_t write(const char *str) override {
+        buf_size_t write(const char *str) override {
             return write(str, strlen(str));
         }
 
-        size_t write(const void *in, size_t strlen) {
+        buf_size_t write(const void *in, buf_size_t strlen) {
             if (in == nullptr) return 0;
             if (strlen == 0) return 0;
             if (getRemainingSpace() < strlen) return 0;
-
             memcpy(getWritePointer(), in, strlen);
-            add(strlen);
-            return strlen;
+            return add(strlen);
         }
 
-        size_t printf(const char *format, ...) PRINTF_OVERRIDE {
+        buf_size_t printf(const char *format, ...) PRINTF_OVERRIDE {
             va_list args;
             va_start(args, format);
             const auto ret = vprintf(format, args);
@@ -57,10 +59,10 @@ namespace Stm32Common {
             return ret;
         }
 
-        size_t vprintf(const char *format, va_list args) PRINTF_OVERRIDE {
+        buf_size_t vprintf(const char *format, va_list args) PRINTF_OVERRIDE {
             const int len = vsnprintf(reinterpret_cast<char *>(getWritePointer()), getRemainingSpace(), format, args);
             if (len <= 0) return 0;
-            return add(std::min(static_cast<size_t>(len), getRemainingSpace()));
+            return add(std::min(static_cast<buf_size_t>(len), getRemainingSpace()));
         }
 
         int read() override {
@@ -70,14 +72,14 @@ namespace Stm32Common {
             return ret;
         }
 
-        size_t read(void *out, size_t size) {
+        buf_size_t read(void *out, buf_size_t size) {
             memset(out, 0, size);
-            const size_t sz = std::min(getLength(), size);
+            const buf_size_t sz = std::min(getLength(), size);
             memcpy(out, getReadPointer(), sz);
             return remove(sz);
         }
 
-        size_t read(StringBuffer *stringBuffer) {
+        buf_size_t read(StringBuffer *stringBuffer) {
             const size_t sz = std::min(getLength(), stringBuffer->getRemainingSpace());
             memcpy(stringBuffer->getWritePointer(), getReadPointer(), sz);
             stringBuffer->add(sz);
@@ -89,6 +91,11 @@ namespace Stm32Common {
             return buffer[tail];
         }
 
+        int peek(buf_size_t pos) {
+            if (pos + tail > head || isEmpty()) return -1;
+            return buffer[tail + pos];
+        }
+
         uint8_t *getWritePointer() {
             return buffer + head;
         }
@@ -97,7 +104,7 @@ namespace Stm32Common {
             return buffer + tail;
         }
 
-        size_t add(const size_t add) {
+        buf_size_t add(const buf_size_t add) {
             const size_t sz = std::min(getRemainingSpace(), add);
             if (sz == 0) return 0;
             head += sz;
@@ -106,7 +113,7 @@ namespace Stm32Common {
             return sz;
         }
 
-        size_t remove(const size_t remove) {
+        buf_size_t remove(const buf_size_t remove) {
             const size_t sz = std::min(getLength(), remove);
             if (sz == 0) return 0;
             tail += sz;
@@ -144,6 +151,13 @@ namespace Stm32Common {
             //DOES NOTHING
         }
 
+        buf_size_signed_t findPos(const uint8_t c) {
+            for (buf_size_t i = 0; i < getLength(); i++) {
+                if(const auto ch = peek(i); ch == c) return i;
+            }
+            return -1;
+        }
+
     protected:
         virtual void onInit() {
         }
@@ -167,8 +181,8 @@ namespace Stm32Common {
         }
 
         uint8_t buffer[Size] = {};
-        size_t head = 0; // Index of the next free byte for write
-        size_t tail = 0; // Index of the next byte to read
+        volatile size_t head = 0; // Index of the next free byte for write
+        volatile size_t tail = 0; // Index of the next byte to read
     };
 }
 
