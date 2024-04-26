@@ -166,7 +166,7 @@ namespace Stm32Common {
          */
         virtual size_t write(const char *inputString) {
             if (inputString == nullptr) return 0;
-            return write((const uint8_t *) inputString, strlen(inputString));
+            return write(reinterpret_cast<const uint8_t *>(inputString), strlen(inputString));
         }
 
         /**
@@ -214,92 +214,92 @@ namespace Stm32Common {
         /**
          * @brief Prints a string to the underlying device.
          *
-         * @param printString The string to be printed.
+         * @param prnt_string The string to be printed.
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(const std::string &printString);
+        size_t print(const std::string &prnt_string);
 
 #endif
 
         /**
          * @brief Writes a null-terminated string to the underlying device.
          *
-         * @param inputString A pointer to a null-terminated string to write.
+         * @param prnt_cstring A pointer to a null-terminated string to write.
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(const char printString[]);
+        size_t print(const char prnt_cstring[]);
 
         /**
          * @brief Writes a single character to the underlying device.
          *
-         * @param printChar The character to be written.
+         * @param prnt_char The character to be written.
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(char printChar);
+        size_t print(char prnt_char);
 
         /**
          * @brief Writes an unsigned character value to the underlying device.
          *
-         * @param printUChar The unsigned character value to be printed.
+         * @param prnt_unsigned_char The unsigned character value to be printed.
          * @param base The base to use for conversion (default is DEC).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(unsigned char printUChar, int base = DEC);
+        size_t print(unsigned char prnt_unsigned_char, int base = DEC);
 
         /**
          * @brief Prints an integer to the underlying device.
          *
-         * @param printInt The integer to be printed.
+         * @param prnt_int The integer to be printed.
          * @param base The base to use for conversion (default is DEC).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(int printInt, int base = DEC);
+        size_t print(int prnt_int, int base = DEC);
 
         /**
          * @brief Prints an unsigned integer to the underlying device.
          *
-         * @param printUInt The unsigned integer to be printed.
+         * @param prnt_unsigned_int The unsigned integer to be printed.
          * @param base The base to use for conversion (default is DEC).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(unsigned int printUInt, int base = DEC);
+        size_t print(unsigned int prnt_unsigned_int, int base = DEC);
 
         /**
          * @brief Prints a long integer to the underlying device.
          *
-         * @param printLong The long integer to be printed.
+         * @param prnt_long The long integer to be printed.
          * @param base The base to use for conversion (default is 10).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(long printLong, int base = DEC);
+        size_t print(long prnt_long, int base = DEC);
 
         /**
          * @brief Prints an unsigned long integer to the underlying device.
          *
-         * @param printULong The unsigned long integer to be printed.
+         * @param prnt_unsigned_long The unsigned long integer to be printed.
          * @param base The base to use for conversion (default is 10).
          * @return The number of characters printed.
          */
-        size_t print(unsigned long printULong, int base = DEC);
+        size_t print(unsigned long prnt_unsigned_long, int base = DEC);
 
         /**
          * @brief Prints a floating-point number to the underlying device.
          *
-         * @param printDouble The floating-point number to be printed.
+         * @param prnt_double The floating-point number to be printed.
          * @param digits The number of decimal places to round the number to (default is 2).
          * @return The number of characters printed to the standard output.
          */
-        size_t print(double printDouble, int digits = 2);
+        size_t print(double prnt_double, int digits = 2);
 
         /**
          * @brief Prints the given object using its printTo() function.
          *
-         * @param printObject The object to be printed.
+         * @param prnt_object The object to be printed.
          * @return The number of characters printed.
          *
          * @see Printable::printTo()
          */
-        size_t print(const Printable &printObject);
+        size_t print(const Printable &prnt_object);
 
 #ifdef ENABLE_PRINTF
 
@@ -340,91 +340,91 @@ namespace Stm32Common {
         /**
          * @brief Prints a string followed by a new line.
          *
-         * @param printString The string to be printed.
+         * @param prnt_string The string to be printed.
          * @return The number of characters printed, including the new line character.
          * @note This function is an extension to the class Print in arduino.
          */
-        size_t println(const std::string &printString);
+        size_t println(const std::string &prnt_string);
 
 #endif
 
         /**
          * @brief Prints the specified string followed by a newline character.
          *
-         * @param printString The string to be printed.
+         * @param prnt_cstring The string to be printed.
          * @return The number of characters printed.
          */
-        size_t println(const char printString[]);
+        size_t println(const char prnt_cstring[]);
 
         /**
          * @brief Prints a single character followed by a newline character.
          *
-         * @param printChar The character to be printed.
+         * @param prnt_char The character to be printed.
          * @return The total number of characters printed, including the newline character.
          */
-        size_t println(char printChar);
+        size_t println(char prnt_char);
 
         /**
          * @brief Prints an unsigned char value followed by a newline character.
          *
-         * @param printUChar The unsigned char value to print.
+         * @param prnt_unsigned_char The unsigned char value to print.
          * @param base The base to use for printing the value (default is DEC).
          * @return The total number of characters printed (including the newline character).
          */
-        size_t println(unsigned char printUChar, int base = DEC);
+        size_t println(unsigned char prnt_unsigned_char, int base = DEC);
 
         /**
          * @brief Prints an integer followed by a newline character.
          *
-         * @param printInt The integer to be printed.
+         * @param prnt_int The integer to be printed.
          * @param base The base of the number system used to format the integer (default: DEC).
          * @return The number of characters printed.
          */
-        size_t println(int printInt, int base = DEC);
+        size_t println(int prnt_int, int base = DEC);
 
         /**
          * @brief Prints an unsigned integer followed by a newline character.
          *
-         * @param printUInt The unsigned integer to be printed.
+         * @param prnt_unsigned_int The unsigned integer to be printed.
          * @param base The base in which the value should be printed. It defaults to DEC (decimal).
          * @return The number of characters printed, including the newline character.
          */
-        size_t println(unsigned int printUInt, int base = DEC);
+        size_t println(unsigned int prnt_unsigned_int, int base = DEC);
 
         /**
          * @brief Prints a long value followed by a line break.
          *
-         * @param printLong The long value to be printed.
+         * @param prnt_long The long value to be printed.
          * @param base (optional) The base in which the value should be printed. Defaults to DEC (decimal).
          * @return The number of characters printed.
          */
-        size_t println(long printLong, int base = DEC);
+        size_t println(long prnt_long, int base = DEC);
 
         /**
          * @brief Prints an unsigned long value followed by a newline character.
          *
-         * @param printULong The unsigned long value to be printed.
+         * @param prnt_unsigned_long The unsigned long value to be printed.
          * @param base The base in which the value should be printed (default is decimal).
          * @return The number of characters printed, including the newline character.
          */
-        size_t println(unsigned long printULong, int base = DEC);
+        size_t println(unsigned long prnt_unsigned_long, int base = DEC);
 
         /**
          * @brief Prints a double value followed by a newline character.
          *
-         * @param printDouble The double value to be printed.
+         * @param prnt_double The double value to be printed.
          * @param digits The number of decimal places to display. By default, it is set to 2.
          * @return The number of characters that were printed.
          */
-        size_t println(double printDouble, int digits = 2);
+        size_t println(double prnt_double, int digits = 2);
 
         /**
          * @brief Prints the given printable object followed by a newline character.
          *
-         * @param x The printable object to print.
+         * @param prnt_object The printable object to print.
          * @return The number of characters printed.
          */
-        size_t println(const Printable &x);
+        size_t println(const Printable &prnt_object);
 
         /**
          * @brief Prints a new line character followed by a carriage return.

@@ -134,56 +134,56 @@ size_t Print::write(const uint8_t *buffer, size_t size) {
 }
 #endif //ENABLE_DIRECT_BUFFER_WRITE
 
-size_t Print::print(const std::string &printString) {
-    return write(printString.c_str(), printString.size());
+size_t Print::print(const std::string &prnt_string) {
+    return write(prnt_string.c_str(), prnt_string.size());
 }
 
-size_t Print::print(const char *printString) {
-    return write(printString);
+size_t Print::print(const char *prnt_cstring) {
+    return write(prnt_cstring);
 }
 
-size_t Print::print(char printChar) {
-    return write(printChar);
+size_t Print::print(char prnt_char) {
+    return write(prnt_char);
 }
 
-size_t Print::print(unsigned char printUChar, int base) {
-    return print((unsigned long) printUChar, base);
+size_t Print::print(unsigned char prnt_unsigned_char, int base) {
+    return print((unsigned long) prnt_unsigned_char, base);
 }
 
-size_t Print::print(int printInt, int base) {
-    return print((long) printInt, base);
+size_t Print::print(int prnt_int, int base) {
+    return print((long) prnt_int, base);
 }
 
-size_t Print::print(unsigned int printUInt, int base) {
-    return print((unsigned long) printUInt, base);
+size_t Print::print(unsigned int prnt_unsigned_int, int base) {
+    return print((unsigned long) prnt_unsigned_int, base);
 }
 
-size_t Print::print(long printLong, int base) {
+size_t Print::print(long prnt_long, int base) {
     if (base == 0) {
-        return write(printLong);
+        return write(prnt_long);
     } else if (base == 10) {
-        if (printLong < 0) {
+        if (prnt_long < 0) {
             int t = print('-');
-            printLong = -printLong;
-            return printNumber(printLong, 10) + t;
+            prnt_long = -prnt_long;
+            return printNumber(prnt_long, 10) + t;
         }
-        return printNumber(printLong, 10);
+        return printNumber(prnt_long, 10);
     } else {
-        return printNumber(printLong, base);
+        return printNumber(prnt_long, base);
     }
 }
 
-size_t Print::print(unsigned long printULong, int base) {
-    if (base == 0) return write(printULong);
-    else return printNumber(printULong, base);
+size_t Print::print(unsigned long prnt_unsigned_long, int base) {
+    if (base == 0) return write(prnt_unsigned_long);
+    else return printNumber(prnt_unsigned_long, base);
 }
 
-size_t Print::print(double printDouble, int digits) {
-    return printFloat(printDouble, digits);
+size_t Print::print(double prnt_double, int digits) {
+    return printFloat(prnt_double, digits);
 }
 
-size_t Print::print(const Printable &printObject) {
-    return printObject.printTo(*this);
+size_t Print::print(const Printable &prnt_object) {
+    return prnt_object.printTo(*this);
 }
 
 
@@ -221,62 +221,62 @@ size_t Print::vprintf(const char *format, va_list args) {
 #endif
 
 
-size_t Print::println(const std::string &printString) {
-    size_t n = print(printString);
+size_t Print::println(const std::string &prnt_string) {
+    size_t n = print(prnt_string);
     n += println();
     return n;
 }
 
-size_t Print::println(const char *printString) {
-    size_t n = print(printString);
+size_t Print::println(const char *prnt_cstring) {
+    size_t n = print(prnt_cstring);
     n += println();
     return n;
 }
 
-size_t Print::println(char printChar) {
-    size_t n = print(printChar);
+size_t Print::println(char prnt_char) {
+    size_t n = print(prnt_char);
     n += println();
     return n;
 }
 
-size_t Print::println(unsigned char printUChar, int base) {
-    size_t n = print(printUChar, base);
+size_t Print::println(unsigned char prnt_unsigned_char, int base) {
+    size_t n = print(prnt_unsigned_char, base);
     n += println();
     return n;
 }
 
-size_t Print::println(int printInt, int base) {
-    size_t n = print(printInt, base);
+size_t Print::println(int prnt_int, int base) {
+    size_t n = print(prnt_int, base);
     n += println();
     return n;
 }
 
-size_t Print::println(unsigned int printUInt, int base) {
-    size_t n = print(printUInt, base);
+size_t Print::println(unsigned int prnt_unsigned_int, int base) {
+    size_t n = print(prnt_unsigned_int, base);
     n += println();
     return n;
 }
 
-size_t Print::println(long printLong, int base) {
-    size_t n = print(printLong, base);
+size_t Print::println(long prnt_long, int base) {
+    size_t n = print(prnt_long, base);
     n += println();
     return n;
 }
 
-size_t Print::println(unsigned long printULong, int base) {
-    size_t n = print(printULong, base);
+size_t Print::println(unsigned long prnt_unsigned_long, int base) {
+    size_t n = print(prnt_unsigned_long, base);
     n += println();
     return n;
 }
 
-size_t Print::println(double printDouble, int digits) {
-    size_t n = print(printDouble, digits);
+size_t Print::println(double prnt_double, int digits) {
+    size_t n = print(prnt_double, digits);
     n += println();
     return n;
 }
 
-size_t Print::println(const Printable &x) {
-    size_t n = print(x);
+size_t Print::println(const Printable &prnt_object) {
+    size_t n = print(prnt_object);
     n += println();
     return n;
 }
