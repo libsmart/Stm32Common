@@ -10,7 +10,6 @@
 #include "Stream.hpp"
 
 namespace Stm32Common {
-
     typedef size_t buf_size_t;
     typedef int64_t buf_size_signed_t;
 
@@ -153,7 +152,9 @@ namespace Stm32Common {
 
         buf_size_signed_t findPos(const uint8_t c) {
             for (buf_size_t i = 0; i < getLength(); i++) {
-                if(const auto ch = peek(i); ch == c) return i;
+                const auto ch = peek(i);
+                if (ch < 0) return -1;
+                if (ch == c) return i;
             }
             return -1;
         }
@@ -176,6 +177,7 @@ namespace Stm32Common {
 
     private:
         void init() {
+            clear();
             onInit();
             onEmpty();
         }
