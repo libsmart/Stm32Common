@@ -16,6 +16,7 @@ extern "C" {
 #endif
 
     unsigned long millis();
+    void delay(unsigned long ms);
 
 #ifdef __cplusplus
 }

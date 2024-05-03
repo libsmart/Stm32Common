@@ -24,3 +24,24 @@ unsigned long millis() {
     return HAL_GetTick() * uwTickFreq;
 #endif
 }
+
+/**
+ * @brief Delays the program execution for a specified number of milliseconds.
+ *
+ * This function provides a portable way to introduce a delay in the program execution. The actual implementation
+ * depends on the underlying platform.
+ *
+ * @param ms The number of milliseconds to delay.
+ *
+ * @note This function does not guarantee precise timing due to variations in system clock frequency and other factors.
+ *
+ * @see HAL_Delay
+ */
+void delay(unsigned long ms) {
+#ifdef tx_thread_sleep
+    tx_thread_sleep((ms * TX_TIMER_TICK_PER_SECOND) / 1000);
+#else
+    HAL_Delay(ms);
+#endif
+
+}
