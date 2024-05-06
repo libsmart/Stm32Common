@@ -1,0 +1,13 @@
+Memory region         Used Size  Region Size  %age Used
+             RAM:        7312 B        20 KB     35.70%
+           FLASH:       24256 B        64 KB     37.01%
+
+
+Mit C++ setup() und loop():
+Memory region         Used Size  Region Size  %age Used
+             RAM:        7320 B        20 KB     35.74%
+           FLASH:       28676 B        64 KB     43.76%
+
+
+
+
