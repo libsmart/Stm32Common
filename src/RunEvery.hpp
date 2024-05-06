@@ -6,31 +6,36 @@
 #ifndef LIBSMART_STM32COMMON_RUNEVERY_HPP
 #define LIBSMART_STM32COMMON_RUNEVERY_HPP
 
+#include "config.hpp"
+
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
+
 #include <cstdint>
 #include <functional>
 #include <iomanip>
 #include <utility>
+
+#endif
+
 #include "Helper.hpp"
 
 namespace Stm32Common {
     class RunEvery {
     public:
+        RunEvery() = default;
+
+        ~RunEvery() = default;
+
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
         using fn_t = std::function<void()>;
 
-        RunEvery(): RunEvery(0, [](){}) {
-        }
+        explicit RunEvery(const uint32_t interval_ms) : _interval_ms(interval_ms) {}
 
-        explicit RunEvery(const uint32_t interval_ms): RunEvery(interval_ms, [](){}) {
-        }
-
-        explicit RunEvery(const fn_t &fn): RunEvery(0, fn) {
-        }
+        explicit RunEvery(const fn_t &fn) : RunEvery(0, fn) {}
 
         RunEvery(const uint32_t interval_ms, fn_t fn)
-            : _interval_ms(interval_ms),
-              _fn(std::move(fn)) {
-            reset();
-        }
+                : _interval_ms(interval_ms),
+                  _fn(std::move(fn)) {}
 
         /**
          * @brief Set the function to be executed by the RunEvery object.
@@ -44,6 +49,47 @@ namespace Stm32Common {
          */
         void setFunction(fn_t fn) { this->_fn = std::move(fn); };
 
+        /**
+         * @brief Executes the given loop function at the defined interval.
+         *
+         * This method checks if the specified interval defined in the RunEvery object has elapsed
+         * since the last execution. If the interval has elapsed, the stored function will be called.
+         *
+         * @param loop_fn The function to be executed.
+         *
+         * @return true if the specified interval has elapsed and the function is executed, false otherwise.
+         */
+        bool loop(const fn_t &loop_fn) {
+            if (isSet()) {
+                loop_fn();
+                reset();
+                return true;
+            }
+            return false;
+        };
+
+        /**
+         * @brief Execute the given loop function at the given interval.
+         *
+         * This method checks if the given interval has elapsed since the last execution.
+         * If the interval has elapsed, the given function will be called.
+         *
+         * @param delay_ms The interval in milliseconds between function executions.
+         * @param loop_fn The function to be executed.
+         *
+         * @return true if the specified interval has elapsed and the function is executed, false otherwise.
+         */
+        bool loop(const uint32_t delay_ms, const fn_t &loop_fn) {
+            setInterval(delay_ms);
+            return loop(loop_fn);
+        };
+
+
+    private:
+        fn_t _fn = []() {};
+#endif
+
+    public:
         /**
          * @brief Set the interval for the RunEvery object.
          *
@@ -99,14 +145,19 @@ namespace Stm32Common {
          *
          * This function checks if the specified interval defined in the RunEvery object has elapsed
          * since the last execution. If the interval has elapsed, the stored function will be called.
+         * Otherwise, it returns false.
          *
-         * @return void
+         * @return true if the specified interval has elapsed and the function is executed, false otherwise.
          */
-        void loop() {
+        bool loop() {
             if (isSet()) {
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
                 _fn();
+#endif
                 reset();
+                return true;
             }
+            return false;
         };
 
         /**
@@ -117,50 +168,18 @@ namespace Stm32Common {
          *
          * @param delay_ms The interval in milliseconds between function executions.
          *
-         * @return void
+         * @return true if the specified interval has elapsed and the function is executed, false otherwise.
          */
-        void loop(const uint32_t delay_ms) {
+        bool loop(const uint32_t delay_ms) {
             setInterval(delay_ms);
-            loop();
+            return loop();
         };
 
-        /**
-         * @brief Executes the given loop function at the defined interval.
-         *
-         * This method checks if the specified interval defined in the RunEvery object has elapsed
-         * since the last execution. If the interval has elapsed, the stored function will be called.
-         *
-         * @param loop_fn The function to be executed.
-         *
-         * @return void
-         */
-        void loop(const fn_t &loop_fn) {
-            if (isSet()) {
-                loop_fn();
-                reset();
-            }
-        };
-
-        /**
-         * @brief Execute the given loop function at the given interval.
-         *
-         * This method checks if the given interval has elapsed since the last execution.
-         * If the interval has elapsed, the given function will be called.
-         *
-         * @param delay_ms The interval in milliseconds between function executions.
-         * @param loop_fn The function to be executed.
-         *
-         * @return void
-         */
-        void loop(const uint32_t delay_ms, const fn_t &loop_fn) {
-            setInterval(delay_ms);
-            loop(loop_fn);
-        };
 
     private:
         uint32_t _last_last_run_ms = {};
-        uint32_t _interval_ms;
-        fn_t _fn;
+        uint32_t _interval_ms = {};
+
     };
 }
 #endif //LIBSMART_STM32COMMON_RUNEVERY_HPP

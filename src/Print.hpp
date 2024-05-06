@@ -19,6 +19,7 @@
 #ifndef LIBSMART_STM32COMMON_PRINT_HPP
 #define LIBSMART_STM32COMMON_PRINT_HPP
 
+#include "config.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -33,23 +34,19 @@
 #endif
 #define BIN 2
 
-#define ENABLE_PRINTF
-#define ENABLE_DIRECT_BUFFER_WRITE
-#define ENABLE_STD_STRING
-
-#ifdef ENABLE_PRINTF
+#ifdef LIBSMART_ENABLE_PRINTF
 #define PRINTF_OVERRIDE override
 #else
 #define PRINTF_OVERRIDE
 #endif
 
-#ifdef ENABLE_DIRECT_BUFFER_WRITE
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
 #define DIRECT_BUFFER_WRITE_OVERRIDE override
 #else
 #define DIRECT_BUFFER_WRITE_OVERRIDE
 #endif
 
-#ifdef ENABLE_STD_STRING
+#ifdef LIBSMART_ENABLE_STD_STRING
 
 #include <string>
 
@@ -116,7 +113,7 @@ namespace Stm32Common {
 
         void clearWriteError() { setWriteError(0); }
 
-#ifdef ENABLE_DIRECT_BUFFER_WRITE
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
 
         /**
          * @brief Retrieves the write buffer.
@@ -209,7 +206,7 @@ namespace Stm32Common {
 
         //        size_t print(const __FlashStringHelper *);
         //        size_t print(const String &);
-#ifdef ENABLE_STD_STRING
+#ifdef LIBSMART_ENABLE_STD_STRING
 
         /**
          * @brief Prints a string to the underlying device.
@@ -301,7 +298,7 @@ namespace Stm32Common {
          */
         size_t print(const Printable &prnt_object);
 
-#ifdef ENABLE_PRINTF
+#ifdef LIBSMART_ENABLE_PRINTF
 
         /**
          * @brief Writes formatted output to the underlying device using a variable argument list.
@@ -335,7 +332,7 @@ namespace Stm32Common {
 
 //        size_t println(const __FlashStringHelper *);
 //        size_t println(const String &s);
-#ifdef ENABLE_STD_STRING
+#ifdef LIBSMART_ENABLE_STD_STRING
 
         /**
          * @brief Prints a string followed by a new line.

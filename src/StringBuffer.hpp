@@ -6,6 +6,7 @@
 #ifndef LIBSMART_STM32COMMON_STRINGBUFFER_HPP
 #define LIBSMART_STM32COMMON_STRINGBUFFER_HPP
 
+#include "config.hpp"
 #include <cstddef>
 #include "Stream.hpp"
 
@@ -42,6 +43,7 @@ namespace Stm32Common {
             return write(str, strlen(str));
         }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         buf_size_t write(const void *in, buf_size_t strlen) {
             if (in == nullptr) return 0;
             if (strlen == 0) return 0;
@@ -50,6 +52,7 @@ namespace Stm32Common {
             return add(strlen);
         }
 
+#ifdef LIBSMART_ENABLE_PRINTF
         buf_size_t printf(const char *format, ...) PRINTF_OVERRIDE {
             va_list args;
             va_start(args, format);
@@ -58,11 +61,14 @@ namespace Stm32Common {
             return ret;
         }
 
+
         buf_size_t vprintf(const char *format, va_list args) PRINTF_OVERRIDE {
             const int len = vsnprintf(reinterpret_cast<char *>(getWritePointer()), getRemainingSpace(), format, args);
             if (len <= 0) return 0;
             return add(std::min(static_cast<buf_size_t>(len), getRemainingSpace()));
         }
+#endif
+#endif
 
         int read() override {
             if (getLength() < 1) return -1;
@@ -71,6 +77,7 @@ namespace Stm32Common {
             return ret;
         }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_READ
         buf_size_t read(void *out, buf_size_t size) {
             memset(out, 0, size);
             const buf_size_t sz = std::min(getLength(), size);
@@ -78,12 +85,16 @@ namespace Stm32Common {
             return remove(sz);
         }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         buf_size_t read(StringBuffer *stringBuffer) {
             const size_t sz = std::min(getLength(), stringBuffer->getRemainingSpace());
             memcpy(stringBuffer->getWritePointer(), getReadPointer(), sz);
             stringBuffer->add(sz);
             return remove(sz);
         }
+#endif
+#endif
+
 
         int peek() override {
             if (isEmpty()) return -1;
@@ -95,13 +106,17 @@ namespace Stm32Common {
             return buffer[tail + pos];
         }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         uint8_t *getWritePointer() {
             return buffer + head;
         }
+#endif
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_READ
         const uint8_t *getReadPointer() {
             return buffer + tail;
         }
+#endif
 
         buf_size_t add(const buf_size_t add) {
             const size_t sz = std::min(getRemainingSpace(), add);
@@ -133,6 +148,7 @@ namespace Stm32Common {
             return getRemainingSpace();
         }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         size_t getWriteBuffer(uint8_t *&buffer) DIRECT_BUFFER_WRITE_OVERRIDE {
             buffer = getWritePointer();
             return getRemainingSpace();
@@ -141,6 +157,7 @@ namespace Stm32Common {
         size_t setWrittenBytes(size_t size) DIRECT_BUFFER_WRITE_OVERRIDE {
             return add(size);
         }
+#endif
 
         int availableForWrite() override {
             return getRemainingSpace();

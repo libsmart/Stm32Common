@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "config.hpp"
 #include "Helper.hpp"
 #include "main.h"
 
@@ -45,3 +46,14 @@ void delay(unsigned long ms) {
 #endif
 
 }
+
+
+#ifdef LIBSMART_OVERWRITE_verbose_terminate_handler
+#if __EXCEPTIONS
+namespace __gnu_cxx {
+    void __verbose_terminate_handler() {
+        Error_Handler();
+    }
+}
+#endif
+#endif

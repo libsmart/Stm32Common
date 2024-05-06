@@ -21,7 +21,7 @@
 
 using namespace Stm32Common;
 
-#ifdef ENABLE_PRINTF
+#ifdef LIBSMART_ENABLE_PRINTF
 
 size_t Print::printNumber(unsigned long n, uint8_t base) {
     switch (base) {
@@ -109,9 +109,9 @@ size_t Print::printFloat(double number, uint8_t digits)
 
     return n;
 }
-#endif //ENABLE_PRINTF
+#endif
 
-#ifdef ENABLE_DIRECT_BUFFER_WRITE
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
 
 size_t Print::write(const uint8_t *inputBytes, size_t size) {
     uint8_t *txBuffer;
@@ -132,11 +132,13 @@ size_t Print::write(const uint8_t *buffer, size_t size) {
     }
     return n;
 }
-#endif //ENABLE_DIRECT_BUFFER_WRITE
+#endif //LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
 
+#ifdef LIBSMART_ENABLE_PRINTF
 size_t Print::print(const std::string &prnt_string) {
     return write(prnt_string.c_str(), prnt_string.size());
 }
+#endif
 
 size_t Print::print(const char *prnt_cstring) {
     return write(prnt_cstring);
@@ -187,7 +189,7 @@ size_t Print::print(const Printable &prnt_object) {
 }
 
 
-#ifdef ENABLE_PRINTF
+#ifdef LIBSMART_ENABLE_PRINTF
 
 size_t Print::printf(const char *format, ...) {
     va_list args;
@@ -198,7 +200,7 @@ size_t Print::printf(const char *format, ...) {
 }
 
 
-#ifdef ENABLE_DIRECT_BUFFER_WRITE
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
 
 size_t Print::vprintf(const char *format, va_list args) {
     uint8_t *buffer;
@@ -220,12 +222,13 @@ size_t Print::vprintf(const char *format, va_list args) {
 #endif
 #endif
 
-
+#ifdef LIBSMART_ENABLE_PRINTF
 size_t Print::println(const std::string &prnt_string) {
     size_t n = print(prnt_string);
     n += println();
     return n;
 }
+#endif
 
 size_t Print::println(const char *prnt_cstring) {
     size_t n = print(prnt_cstring);

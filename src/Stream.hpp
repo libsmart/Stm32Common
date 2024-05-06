@@ -18,6 +18,7 @@
 #ifndef LIBSMART_STM32COMMON_STREAM_HPP
 #define LIBSMART_STM32COMMON_STREAM_HPP
 
+#include "config.hpp"
 #include "Print.hpp"
 
 #define NO_IGNORE_CHAR  '\x01' // a char not found in a valid ASCII numeric field
