@@ -19,7 +19,7 @@
 #ifndef LIBSMART_STM32COMMON_PRINT_HPP
 #define LIBSMART_STM32COMMON_PRINT_HPP
 
-#include "config.hpp"
+#include "libsmart_config.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <cstring>

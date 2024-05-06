@@ -19,7 +19,7 @@
 #ifndef LIBSMART_STM32COMMON_PRINTABLE_HPP
 #define LIBSMART_STM32COMMON_PRINTABLE_HPP
 
-#include "config.hpp"
+#include "libsmart_config.hpp"
 #include <cstddef>
 
 namespace Stm32Common {

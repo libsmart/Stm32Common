@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "config.hpp"
+#include "libsmart_config.hpp"
 #include "Helper.hpp"
 #include "main.h"
 
@@ -15,8 +15,10 @@
  * @return The current millis value.
  */
 unsigned long millis() {
+#ifdef TICK_INT_PRIORITY
 #if TICK_INT_PRIORITY > 14
 #warning Please give the tick interrupt a higher priority than 15
+#endif
 #endif
 
 #ifdef tx_time_get
@@ -51,6 +53,13 @@ void delay(unsigned long ms) {
 #ifdef LIBSMART_OVERWRITE_verbose_terminate_handler
 #if __EXCEPTIONS
 namespace __gnu_cxx {
+    /**
+     * @brief Terminate handler for verbose termination.
+     *
+     * This function is called when a C++ exception propagates out of a function that
+     * does not have an exception specification.
+     * It calls the Error_Handler() function.
+     */
     void __verbose_terminate_handler() {
         Error_Handler();
     }
