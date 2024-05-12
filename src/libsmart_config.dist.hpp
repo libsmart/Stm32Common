@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+
+#define CCMRAM __attribute__((section(".ccmram")))
+
+
 /**
  * Enable or disable the use of std::function.
  */
