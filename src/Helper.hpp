@@ -8,6 +8,12 @@
 
 #include "libsmart_config.hpp"
 
+
+// #define F(x) x
+typedef char __FlashStringHelper;
+#define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(string_literal))
+
+
 #ifndef __cplusplus
 #define min(a, b) ((a)<(b)?(a):(b))
 #define max(a, b) ((a)>(b)?(a):(b))
