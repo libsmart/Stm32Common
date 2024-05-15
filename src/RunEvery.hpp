@@ -6,7 +6,7 @@
 #ifndef LIBSMART_STM32COMMON_RUNEVERY_HPP
 #define LIBSMART_STM32COMMON_RUNEVERY_HPP
 
-#include "libsmart_config.hpp"
+#include <libsmart_config.hpp>
 
 #ifdef LIBSMART_ENABLE_STD_FUNCTION
 

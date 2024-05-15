@@ -6,7 +6,7 @@
 #ifndef LIBSMART_STM32COMMON_RINGBUFFER_HPP
 #define LIBSMART_STM32COMMON_RINGBUFFER_HPP
 
-#include "libsmart_config.hpp"
+#include <libsmart_config.hpp>
 #include <array>
 #include <cstddef>
 

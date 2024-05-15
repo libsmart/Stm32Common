@@ -6,7 +6,7 @@
 #ifndef LIBSMART_STM32COMMON_HELPER_HPP
 #define LIBSMART_STM32COMMON_HELPER_HPP
 
-#include "libsmart_config.hpp"
+#include <libsmart_config.hpp>
 
 
 // #define F(x) x
