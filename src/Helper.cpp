@@ -6,6 +6,9 @@
 #include "libsmart_config.hpp"
 #include "Helper.hpp"
 #include "main.h"
+#ifdef LIBSMART_USE_THREADX
+#include "tx_api.h"
+#endif
 
 /**
  * @brief Get the current millis value.
@@ -22,7 +25,7 @@ unsigned long millis() {
 #endif
 
 #ifdef tx_time_get
-    return tx_time_get() * (1000 / TX_TIMER_TICK_PER_SECOND)
+    return tx_time_get() * (1000 / TX_TIMER_TICKS_PER_SECOND);
 #else
     return HAL_GetTick() * uwTickFreq;
 #endif
@@ -42,7 +45,7 @@ unsigned long millis() {
  */
 void delay(unsigned long ms) {
 #ifdef tx_thread_sleep
-    tx_thread_sleep((ms * TX_TIMER_TICK_PER_SECOND) / 1000);
+    tx_thread_sleep((ms * TX_TIMER_TICKS_PER_SECOND) / 1000);
 #else
     HAL_Delay(ms);
 #endif

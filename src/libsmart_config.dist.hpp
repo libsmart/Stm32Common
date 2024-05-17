@@ -60,3 +60,9 @@
 #define LIBSMART_OVERWRITE_verbose_terminate_handler
 
 
+
+/**
+ * Enable or disable the use of ThreadX.
+ */
+#undef LIBSMART_USE_THREADX
+// #define LIBSMART_USE_THREADX
