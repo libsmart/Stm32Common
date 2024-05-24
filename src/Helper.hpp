@@ -12,7 +12,7 @@
 // #define F(x) x
 typedef char __FlashStringHelper;
 #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(string_literal))
-
+#define BREAKPOINT __asm volatile("BKPT #0");
 
 #ifndef __cplusplus
 #define min(a, b) ((a)<(b)?(a):(b))
