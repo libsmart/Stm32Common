@@ -24,18 +24,41 @@ namespace Stm32Common {
     public:
         RunEvery() = default;
 
-        ~RunEvery() = default;
+        virtual ~RunEvery() = default;
+
+        explicit RunEvery(const uint32_t interval_and_delay_ms)
+            : _delay_ms(interval_and_delay_ms),
+              _interval_ms(interval_and_delay_ms) { ; }
+
+        RunEvery(const uint32_t interval_ms, const uint32_t delay_ms)
+            : _delay_ms(delay_ms),
+              _interval_ms(interval_ms) { ; }
+
+        RunEvery(const uint32_t interval_ms, const uint32_t delay_ms, const uint32_t run_count_max)
+            : _run_count_max(run_count_max),
+              _delay_ms(delay_ms),
+              _interval_ms(interval_ms) { ; }
 
 #ifdef LIBSMART_ENABLE_STD_FUNCTION
         using fn_t = std::function<void()>;
 
-        explicit RunEvery(const uint32_t interval_ms) : _interval_ms(interval_ms) {}
+        explicit RunEvery(const fn_t &fn) : RunEvery(0, fn) { ; }
 
-        explicit RunEvery(const fn_t &fn) : RunEvery(0, fn) {}
+        RunEvery(const uint32_t interval_and_delay_ms, fn_t fn)
+            : _fn(std::move(fn)),
+              _delay_ms(interval_and_delay_ms),
+              _interval_ms(interval_and_delay_ms) { ; }
 
-        RunEvery(const uint32_t interval_ms, fn_t fn)
-                : _interval_ms(interval_ms),
-                  _fn(std::move(fn)) {}
+        RunEvery(const uint32_t interval_ms, const uint32_t delay_ms, fn_t fn)
+            : _fn(std::move(fn)),
+              _delay_ms(delay_ms),
+              _interval_ms(interval_ms) { ; }
+
+        RunEvery(const uint32_t interval_ms, const uint32_t delay_ms, const uint32_t run_count_max, fn_t fn)
+            : _fn(std::move(fn)),
+              _run_count_max(run_count_max),
+              _delay_ms(delay_ms),
+              _interval_ms(interval_ms) { ; }
 
         /**
          * @brief Set the function to be executed by the RunEvery object.
@@ -47,7 +70,7 @@ namespace Stm32Common {
          *
          * @return void
          */
-        void setFunction(fn_t fn) { this->_fn = std::move(fn); };
+        virtual void setFunction(fn_t fn) { this->_fn = std::move(fn); }
 
         /**
          * @brief Executes the given loop function at the defined interval.
@@ -59,7 +82,7 @@ namespace Stm32Common {
          *
          * @return true if the specified interval has elapsed and the function is executed, false otherwise.
          */
-        bool loop(const fn_t &loop_fn) {
+        virtual bool loop(const fn_t &loop_fn) {
             if (isSet()) {
                 loop_fn();
                 reset();
@@ -74,19 +97,18 @@ namespace Stm32Common {
          * This method checks if the given interval has elapsed since the last execution.
          * If the interval has elapsed, the given function will be called.
          *
-         * @param delay_ms The interval in milliseconds between function executions.
+         * @param interval_ms The interval in milliseconds between function executions.
          * @param loop_fn The function to be executed.
          *
          * @return true if the specified interval has elapsed and the function is executed, false otherwise.
          */
-        bool loop(const uint32_t delay_ms, const fn_t &loop_fn) {
-            setInterval(delay_ms);
+        virtual bool loop(const uint32_t interval_ms, const fn_t &loop_fn) {
+            setInterval(interval_ms);
             return loop(loop_fn);
         };
 
-
     private:
-        fn_t _fn = []() {};
+        fn_t _fn = []() { ; };
 #endif
 
     public:
@@ -99,7 +121,34 @@ namespace Stm32Common {
          *
          * @return void
          */
-        void setInterval(const uint32_t interval_ms) { _interval_ms = interval_ms; }
+        virtual void setInterval(const uint32_t interval_ms) { _interval_ms = interval_ms; }
+
+
+        /**
+         * @brief Set the delay in milliseconds for the RunEvery object.
+         *
+         * This method sets the delay in milliseconds for the RunEvery object. The delay determines the interval at
+         * which the function attached to the RunEvery object will be executed.
+         *
+         * @param delay_ms The delay in milliseconds.
+         *
+         * @return void
+         */
+        virtual void setDelay(const uint32_t delay_ms) { _delay_ms = delay_ms; }
+
+
+        /**
+         * @brief Set the maximum number of runs allowed for the RunEvery object.
+         *
+         * This method sets the maximum number of runs allowed for the RunEvery object. Once the number of runs
+         * reaches this maximum value, the RunEvery object will stop executing.
+         *
+         * @param run_count_max The maximum number of runs allowed.
+         *
+         * @return void
+         */
+        virtual void setRunCountMax(const uint32_t run_count_max) { _run_count_max = run_count_max; }
+
 
         /**
          * @brief Conversion operator to bool.
@@ -118,7 +167,10 @@ namespace Stm32Common {
          *
          * @return void
          */
-        void reset() { _last_last_run_ms = millis(); }
+        virtual void reset() {
+            _run_count++;
+            _last_last_run_ms = millis();
+        }
 
         /**
          * @brief Get the elapsed time since the last run of the RunEvery object.
@@ -128,17 +180,19 @@ namespace Stm32Common {
          *
          * @return The elapsed time [ms].
          */
-        [[nodiscard]] uint32_t elapsed() const { return millis() - _last_last_run_ms; }
+        [[nodiscard]] virtual uint32_t elapsed() const { return millis() - _last_last_run_ms; }
 
         /**
-         * @brief Check if the specified interval has elapsed since the last execution.
+         * @brief Check if the RunEvery object is set to execute the function.
          *
-         * This method checks if the specified interval defined in the RunEvery object has elapsed since the last execution.
-         * If the interval has elapsed, it returns true; otherwise, it returns false.
+         * This method checks if the RunEvery object is set by evaluating the conditions for execution.
          *
-         * @return true if the specified interval has elapsed, false otherwise.
+         * @return The result of the evaluation as a boolean. Returns true if the object is set, false otherwise.
          */
-        [[nodiscard]] bool isSet() const { return elapsed() >= _interval_ms; }
+        [[nodiscard]] virtual bool isSet() const {
+            return (_run_count_max == 0 || _run_count < _run_count_max) &&
+                   (_run_count == 0 ? elapsed() >= _delay_ms : elapsed() >= _interval_ms);
+        }
 
         /**
          * @brief Executes the stored loop function at the defined interval.
@@ -149,7 +203,7 @@ namespace Stm32Common {
          *
          * @return true if the specified interval has elapsed and the function is executed, false otherwise.
          */
-        bool loop() {
+        virtual bool loop() {
             if (isSet()) {
 #ifdef LIBSMART_ENABLE_STD_FUNCTION
                 _fn();
@@ -158,7 +212,7 @@ namespace Stm32Common {
                 return true;
             }
             return false;
-        };
+        }
 
         /**
          * @brief Executes the stored loop function at the defined interval.
@@ -166,20 +220,40 @@ namespace Stm32Common {
          * This function checks if the specified interval defined in the RunEvery object has elapsed
          * since the last execution. If the interval has elapsed, the stored function will be called.
          *
-         * @param delay_ms The interval in milliseconds between function executions.
+         * @param interval_ms The interval in milliseconds between function executions.
          *
          * @return true if the specified interval has elapsed and the function is executed, false otherwise.
          */
-        bool loop(const uint32_t delay_ms) {
-            setInterval(delay_ms);
+        virtual bool loop(const uint32_t interval_ms) {
+            setInterval(interval_ms);
             return loop();
-        };
+        }
 
+    protected:
+        /**
+         * @brief Represents the timestamp of the last execution of a particular function or task.
+         */
+        uint32_t _last_last_run_ms = millis();
 
-    private:
-        uint32_t _last_last_run_ms = {};
+        /**
+         * @brief Number of times the function has been executed.
+         */
+        uint32_t _run_count = {};
+
+        /**
+         * @brief Maximum number of times the function can be run.
+         */
+        uint32_t _run_count_max = {};
+
+        /**
+         * @brief Represents the delay in milliseconds for the RunOnce utility class.
+         */
+        uint32_t _delay_ms = {};
+
+        /**
+         * @brief The interval in milliseconds.
+         */
         uint32_t _interval_ms = {};
-
     };
 }
-#endif //LIBSMART_STM32COMMON_RUNEVERY_HPP
+#endif
