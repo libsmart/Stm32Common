@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#ifndef LIBSMART_STM32COMMON_LIBSMART_CONFIG_DIST_HPP
+#define LIBSMART_STM32COMMON_LIBSMART_CONFIG_DIST_HPP
+
+#define LIBSMART_STM32COMMON
+
 
 #define CCMRAM __attribute__((section(".ccmram")))
 
@@ -66,3 +71,5 @@
  */
 #undef LIBSMART_USE_THREADX
 // #define LIBSMART_USE_THREADX
+
+#endif

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "libsmart_config.hpp"
+#include <libsmart_config.hpp>
 #include "Helper.hpp"
 #include "main.h"
 #ifdef LIBSMART_USE_THREADX
