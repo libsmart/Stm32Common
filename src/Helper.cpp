@@ -53,6 +53,23 @@ void delay(unsigned long ms) {
 }
 
 
+/**
+ * @brief Maps a value from one range to another range.
+ *
+ * This function takes an input value and maps it from the input range [inMin, inMax] to the output range [outMin, outMax].
+ *
+ * @param value The value to be mapped.
+ * @param inMin The minimum value of the input range.
+ * @param inMax The maximum value of the input range.
+ * @param outMin The minimum value of the output range.
+ * @param outMax The maximum value of the output range.
+ * @return The mapped value in the output range.
+ */
+long map(const long value, const long inMin, const long inMax, const long outMin, const long outMax) {
+    return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
+
 #ifdef LIBSMART_OVERWRITE_verbose_terminate_handler
 #if __EXCEPTIONS
 namespace __gnu_cxx {

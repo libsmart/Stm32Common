@@ -25,6 +25,7 @@ extern "C" {
 
     unsigned long millis();
     void delay(unsigned long ms);
+    long map(long value, long inMin, long inMax, long outMin, long outMax);
 
 #ifdef __cplusplus
 }
