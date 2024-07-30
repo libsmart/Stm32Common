@@ -20,7 +20,7 @@
 #endif
 
 namespace Stm32Common {
-    class RunOnce final : public RunEvery {
+    class RunOnce : public RunEvery {
     public:
         RunOnce() : RunOnce(0) { ; }
 
