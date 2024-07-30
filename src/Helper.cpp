@@ -31,6 +31,22 @@ unsigned long millis() {
 #endif
 }
 
+
+/**
+ * @brief Get the current micros value.
+ *
+ * This function returns the number of microseconds since the device was powered on or reset.
+ *
+ * @return The current micros value.
+ */
+uint64_t micros() {
+    uint64_t micros = HAL_GetTick() * 1000;  // Millisekunden in Mikrosekunden umrechnen
+    micros += (SysTick->LOAD - SysTick->VAL) /
+              (SystemCoreClock / 1000000); // Zeit seit dem letzten Millisekunden-Überlauf hinzufügen
+    return micros;
+}
+
+
 /**
  * @brief Delays the program execution for a specified number of milliseconds.
  *
