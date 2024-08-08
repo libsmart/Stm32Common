@@ -19,26 +19,70 @@ namespace Stm32Common {
     public:
         StringBuffer() { init(); };
 
+        /**
+         * Check if the StringBuffer is empty.
+         *
+         * This method checks if the StringBuffer is empty by comparing the head index with the tail index.
+         *
+         * \return True if the StringBuffer is empty, false otherwise.
+         */
         [[nodiscard]] bool isEmpty() const {
             return head == tail;
         }
 
+        /**
+         * Check if the StringBuffer is full.
+         *
+         * This method checks if the StringBuffer is full by comparing the head index with the maximum buffer size (Size).
+         *
+         * \return True if the StringBuffer is full, false otherwise.
+         */
         [[nodiscard]] bool isFull() const {
             return head == Size;
         }
 
+        /**
+         * Get the remaining space of the StringBuffer.
+         *
+         * This method returns the number of bytes that are available for writing to the StringBuffer. It is calculated by subtracting the head index from the maximum buffer size (Size).
+         *
+         * \return The number of bytes available for writing.
+         */
         [[nodiscard]] buf_size_t getRemainingSpace() const {
             return Size - head;
         }
 
+        /**
+         * Get the length of the StringBuffer.
+         *
+         * This method returns the number of bytes currently stored in the StringBuffer. It is calculated by subtracting the tail index from the head index.
+         *
+         * \return The length of the StringBuffer.
+         */
         [[nodiscard]] buf_size_t getLength() const {
             return head - tail;
         }
 
+        /**
+         * Write a single byte to the StringBuffer.
+         *
+         * This method writes a single byte to the StringBuffer by calling the write method with the byte buffer and size of 1.
+         *
+         * @param c The byte to be written to the StringBuffer.
+         * @return The number of bytes written to the StringBuffer.
+         */
         buf_size_t write(const uint8_t c) override {
             return write(&c, 1);
         }
 
+        /**
+         * Write a null-terminated string to the StringBuffer.
+         *
+         * This method writes a null-terminated string to the StringBuffer by calling the write method with the byte buffer and the length of the string calculated using strlen() function.
+         *
+         * @param str The null-terminated string to be written to the StringBuffer.
+         * @return The number of bytes written to the StringBuffer.
+         */
         buf_size_t write(const char *str) override {
             return write(str, strlen(str));
         }
@@ -127,6 +171,12 @@ namespace Stm32Common {
             return sz;
         }
 
+        /**
+         * Remove a specified number of bytes from the StringBuffer.
+         *
+         * @param remove The number of bytes to remove.
+         * @return The actual number of bytes removed from the StringBuffer.
+         */
         buf_size_t remove(const buf_size_t remove) {
             const size_t sz = std::min(getLength(), remove);
             if (sz == 0) return 0;
@@ -139,13 +189,25 @@ namespace Stm32Common {
             return sz;
         }
 
+        /**
+         * Clear the StringBuffer by resetting head and tail indices to 0 and
+         * clearing the buffer with zero values.
+         */
         void clear() {
             head = tail = 0;
-            memset(buffer, 0, Size);
+            std::memset(buffer, 0, Size);
         }
 
+        /**
+         * Get the number of bytes available for reading from the StringBuffer.
+         *
+         * This method returns the number of bytes that are available for reading from the StringBuffer by calling the
+         * getLength() method.
+         *
+         * @return The number of bytes available for reading.
+         */
         int available() override {
-            return getRemainingSpace();
+            return getLength();
         }
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
@@ -159,6 +221,14 @@ namespace Stm32Common {
         }
 #endif
 
+        /**
+         * Get the number of bytes available for writing to the StringBuffer.
+         *
+         * This method returns the number of bytes that are available for writing to the StringBuffer by calling the
+         * getRemainingSpace() method.
+         *
+         * @return The number of bytes available for writing.
+         */
         int availableForWrite() override {
             return getRemainingSpace();
         }
