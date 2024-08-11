@@ -35,14 +35,18 @@ namespace Stm32Common {
 
 
     /**
-     * @brief The Stream class is an abstract base class that provides a common interface for derived classes that represent input streams of data.
+     * @brief The Stream class is an abstract base class that provides a common interface for derived classes that
+     * represent input streams of data.
      *
-     * The Stream class defines several pure virtual functions that must be implemented by derived classes. These functions include reading a byte
-     * from the input stream, getting the next character from the input stream without removing it, and checking how many bytes are available to read
-     * from the input stream.
+     * The Stream class defines several pure virtual functions that must be implemented by derived classes. These
+     * functions include reading a byte from the input stream, getting the next character from the input stream without
+     * removing it, and checking how many bytes are available to read from the input stream.
      *
-     * The Stream class also provides functions for setting and getting the timeout for stream operations, searching for a target string in the stream,
-     * parsing integers and floats from the stream, and reading bytes from the stream into a buffer.
+     * The Stream class also provides functions for setting and getting the timeout for stream operations, searching
+     * for a target string in the stream, parsing integers and floats from the stream, and reading bytes from the
+     * stream into a buffer.
+     *
+     * @note This class replicates the arduino Stream class.
      */
     class Stream : public Print {
     protected:
