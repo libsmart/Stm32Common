@@ -6,6 +6,7 @@
 #ifndef LIBSMART_STM32COMMON_STRINGBUFFER_HPP
 #define LIBSMART_STM32COMMON_STRINGBUFFER_HPP
 
+#include <algorithm>
 #include <libsmart_config.hpp>
 #include <cstddef>
 #include "Stream.hpp"
