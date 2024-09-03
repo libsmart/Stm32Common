@@ -6,6 +6,7 @@
 #ifndef LIBSMART_STM32COMMON_HELPER_HPP
 #define LIBSMART_STM32COMMON_HELPER_HPP
 
+#include <cstdint>
 #include <libsmart_config.hpp>
 
 
@@ -26,6 +27,7 @@ extern "C" {
     unsigned long millis();
     unsigned long long micros();
     void delay(unsigned long ms);
+    void delayMicroseconds(uint64_t us);
     long map(long value, long inMin, long inMax, long outMin, long outMax);
 
 #ifdef __cplusplus

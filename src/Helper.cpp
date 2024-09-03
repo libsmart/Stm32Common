@@ -40,9 +40,9 @@ unsigned long millis() {
  * @return The current micros value.
  */
 uint64_t micros() {
-    uint64_t micros = HAL_GetTick() * 1000;  // Millisekunden in Mikrosekunden umrechnen
+    uint64_t micros = HAL_GetTick() * 1000; // Millisekunden in Mikrosekunden umrechnen
     micros += (SysTick->LOAD - SysTick->VAL) /
-              (SystemCoreClock / 1000000); // Zeit seit dem letzten Millisekunden-Überlauf hinzufügen
+            (SystemCoreClock / 1000000); // Zeit seit dem letzten Millisekunden-Überlauf hinzufügen
     return micros;
 }
 
@@ -65,7 +65,28 @@ void delay(unsigned long ms) {
 #else
     HAL_Delay(ms);
 #endif
+}
 
+
+/**
+ * @brief Delay execution for the specified amount of microseconds.
+ *
+ * This function delays the execution for the given number of microseconds.
+ * It starts by getting the current microsecond count using the `micros()` function.
+ * Then it enters a loop, continuously checking the current microsecond count until the desired delay has passed.
+ * Inside the while loop, a no-operation instruction `__NOP()` is used to prevent compiler optimization from removing the loop.
+ * The delay is calculated by subtracting the start microsecond count from the current microsecond count and comparing it with the desired delay.
+ *
+ * @param us The desired delay time in microseconds.
+ *
+ * @note This function also depends on the __NOP() instruction from cmsis_gcc.h which is used to prevent compiler optimization
+ * and ensure that the loop is not optimized out during compilation.
+ *
+ * @see micros()
+ */
+void delayMicroseconds(uint64_t us) {
+    const auto startMicros = micros();
+    while (micros() - startMicros < us) { __NOP(); };
 }
 
 
