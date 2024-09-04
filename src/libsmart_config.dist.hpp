@@ -9,6 +9,12 @@
 #define LIBSMART_STM32COMMON
 
 
+/*
+ * Add this to CMakeLists_template.txt to use the small printf implementation:
+ * add_compile_definitions(-DPRINTF_INCLUDE_CONFIG_H)
+ */
+
+
 #define CCMRAM __attribute__((section(".ccmram")))
 
 
