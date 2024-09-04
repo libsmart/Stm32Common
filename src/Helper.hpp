@@ -14,6 +14,9 @@
 typedef char __FlashStringHelper;
 #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(string_literal))
 #define BREAKPOINT __asm volatile("BKPT #0");
+#define LIBSMART_BREAKPOINT __asm volatile("BKPT #0");
+#define LIBSMART_NOP(...) __asm volatile ("nop")
+#define LIBSMART_NOF(...)
 
 #ifndef __cplusplus
 #define min(a, b) ((a)<(b)?(a):(b))
