@@ -9,7 +9,24 @@
 #include <algorithm>
 #include <libsmart_config.hpp>
 #include <cstddef>
+#include "Helper.hpp"
 #include "Stream.hpp"
+
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
+#include <functional>
+#include <utility>
+#define onInitFunction onInitFn
+#define onEmptyFunction onEmptyFn
+#define onNonEmptyFunction onNonEmptyFn
+#define onWriteFunction onWriteFn
+#define onReadFunction onReadFn
+#else
+#define onInitFunction LIBSMART_NOF
+#define onEmptyFunction LIBSMART_NOF
+#define onNonEmptyFunction LIBSMART_NOF
+#define onWriteFunction LIBSMART_NOF
+#define onReadFunction LIBSMART_NOF
+#endif
 
 namespace Stm32Common {
     typedef size_t buf_size_t;
@@ -173,8 +190,12 @@ namespace Stm32Common {
             const size_t sz = std::min(getRemainingSpace(), add);
             if (sz == 0) return 0;
             head += sz;
-            if (head == sz) onNonEmpty();
+            if (head == sz) {
+                onNonEmpty();
+                onNonEmptyFunction();
+            }
             onWrite();
+            onWriteFunction();
             return sz;
         }
 
@@ -191,8 +212,10 @@ namespace Stm32Common {
             if (head == tail) {
                 clear();
                 onEmpty();
+                onEmptyFunction();
             }
             onRead();
+            onReadFunction();
             return sz;
         }
 
@@ -201,7 +224,8 @@ namespace Stm32Common {
          * clearing the buffer with zero values.
          */
         void clear() {
-            head = tail = 0;
+            head = 0;
+            tail = 0;
             std::memset(buffer, 0, Size);
         }
 
@@ -253,28 +277,67 @@ namespace Stm32Common {
             return -1;
         }
 
+        using onInitCb_t = void();
+        using onEmptyCb_t = void();
+        using onNonEmptyCb_t = void();
+        using onWriteCb_t = void();
+        using onReadCb_t = void();
+
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
+        using onInitFn_t = std::function<onInitCb_t>;
+        using onEmptyFn_t = std::function<onEmptyCb_t>;
+        using onNonEmptyFn_t = std::function<onNonEmptyCb_t>;
+        using onWriteFn_t = std::function<onWriteCb_t>;
+        using onReadFn_t = std::function<onReadCb_t>;
+
+        void setOnInitFn(const onInitFn_t &on_init_fn) { onInitFn = on_init_fn; }
+        void setOnEmptyFn(const onEmptyFn_t &on_empty_fn) { onEmptyFn = on_empty_fn; }
+        void setOnNonEmptyFn(const onNonEmptyFn_t &on_non_empty_fn) { onNonEmptyFn = on_non_empty_fn; }
+
+        /**
+         * Set the callback function for write operations.
+         *
+         * This function sets the callback function for write operations. The provided on_write_fn will be called
+         * whenever a write operation is performed on the StringBuffer.
+         *
+         * Note: Take care when using StrinBuffer with interrupts. Some callbacks are called by the isr.
+         *
+         * \param on_write_fn The callback function for write operations.
+         */
+        void setOnWriteFn(const onWriteFn_t &on_write_fn) { onWriteFn = on_write_fn; }
+
+
+        void setOnReadFn(const onReadFn_t &on_read_fn) { onReadFn = on_read_fn; }
+
+#endif
+
     protected:
-        virtual void onInit() {
-        }
+        virtual void onInit() { ; }
 
-        virtual void onEmpty() {
-        }
+        virtual void onEmpty() { ; }
 
-        virtual void onNonEmpty() {
-        }
+        virtual void onNonEmpty() { ; }
 
-        virtual void onWrite() {
-        }
+        virtual void onWrite() { ; }
 
-        virtual void onRead() {
-        }
+        virtual void onRead() { ; }
 
     private:
         void init() {
             clear();
             onInit();
+            onInitFunction();
             onEmpty();
+            onEmptyFunction();
         }
+
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
+        onInitFn_t onInitFn = []() { ; };
+        onEmptyFn_t onEmptyFn = []() { ; };
+        onNonEmptyFn_t onNonEmptyFn = []() { ; };
+        onWriteFn_t onWriteFn = []() { ; };
+        onReadFn_t onReadFn = []() { ; };
+#endif
 
         uint8_t buffer[Size] = {};
         volatile size_t head = 0; // Index of the next free byte for write

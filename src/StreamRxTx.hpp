@@ -120,14 +120,26 @@ namespace Stm32Common {
 
     private:
         /**
-         * @brief The receive buffer for incoming data.
+         * @class rxBufferClass
+         * @brief A class that represents a transmit buffer.
          *
-         * The rxBuffer variable is an instance of the rxBuffer_t class, which is a template class that implements a fixed-size circular buffer.
-         * It is used to store incoming data that has been received by the StreamRxTx object.
-         *
-         * The rxBuffer is a private member variable of the StreamRxTx class, so it can only be accessed and modified within the class.
+         * This class is a final subclass of rxBuffer_t and is used to manage the receive buffer.
          */
-        rxBuffer_t rxBuffer;
+        class rxBufferClass final : public txBuffer_t {
+        public:
+            rxBufferClass() = delete;
+
+            explicit rxBufferClass(StreamRxTx &streamRxTxInstance)
+                : streamRxTxInstance(streamRxTxInstance) { ; }
+
+        protected:
+            void onWrite() override {
+                StringBuffer<bufferSizeRx>::onWrite();
+            }
+
+            StreamRxTx &streamRxTxInstance;
+        } rxBuffer{*this};
+
 
         /**
          * @class txBufferClass
@@ -139,8 +151,8 @@ namespace Stm32Common {
         public:
             txBufferClass() = delete;
 
-            explicit txBufferClass(StreamRxTx &self)
-                : streamRxTxInstance(self) { ; }
+            explicit txBufferClass(StreamRxTx &streamRxTxInstance)
+                : streamRxTxInstance(streamRxTxInstance) { ; }
 
         protected:
             void onWrite() override {
