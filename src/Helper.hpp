@@ -6,7 +6,6 @@
 #ifndef LIBSMART_STM32COMMON_HELPER_HPP
 #define LIBSMART_STM32COMMON_HELPER_HPP
 
-#include <cstdint>
 #include <libsmart_config.hpp>
 
 

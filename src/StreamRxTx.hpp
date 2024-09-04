@@ -125,7 +125,7 @@ namespace Stm32Common {
          *
          * This class is a final subclass of rxBuffer_t and is used to manage the receive buffer.
          */
-        class rxBufferClass final : public txBuffer_t {
+        class rxBufferClass final : public rxBuffer_t {
         public:
             rxBufferClass() = delete;
 
