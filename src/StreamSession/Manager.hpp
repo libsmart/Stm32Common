@@ -8,19 +8,20 @@
 
 #include <main.h>
 #include <array>
+#include "Loggable.hpp"
+#include "ManagerInterface.hpp"
 #include "StreamSessionInterface.hpp"
-
 
 namespace Stm32Common::StreamSession {
     template<class StreamSessionT, size_t MaxSessionCount>
-    class Manager {
+    class Manager : public ManagerInterface {
         static_assert(std::is_base_of<StreamSessionInterface, StreamSessionT>::value,
                       "StreamSession must be of type StreamSessionInterface");
 
     public:
-        virtual ~Manager() = default;
+        ~Manager() override = default;
 
-        StreamSessionT *getNewSession(uint32_t id) {
+        StreamSessionInterface *getNewSession(uint32_t id) override {
             if (getSessionById(id) != nullptr) return nullptr;
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (!sessions[i].isInUse()) {
@@ -33,8 +34,8 @@ namespace Stm32Common::StreamSession {
         }
 
 
-        void removeSession(StreamSessionT *session) {
-            if(session == nullptr) return;
+        void removeSession(StreamSessionInterface *session) override {
+            if (session == nullptr) return;
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (&sessions[i] == session && sessions[i].isInUse()) {
                     sessions[i].end();
@@ -43,7 +44,7 @@ namespace Stm32Common::StreamSession {
             }
         }
 
-        StreamSessionT *getSessionById(uint32_t id) {
+        StreamSessionInterface *getSessionById(uint32_t id) override {
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (sessions[i].isInUse() && sessions[i].getId() == id) {
                     return &sessions[i];
@@ -52,7 +53,7 @@ namespace Stm32Common::StreamSession {
             return nullptr;
         }
 
-        StreamSessionT *getFirstSession() {
+        StreamSessionInterface *getFirstSession() override {
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (sessions[i].isInUse()) {
                     return &sessions[i];
@@ -61,8 +62,8 @@ namespace Stm32Common::StreamSession {
             return nullptr;
         }
 
-        StreamSessionT *getNextSession(StreamSessionT *session) {
-            if(session == nullptr) return nullptr;
+        StreamSessionInterface *getNextSession(StreamSessionInterface *session) override {
+            if (session == nullptr) return nullptr;
             bool found = false;
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (found && sessions[i].isInUse()) {
@@ -73,7 +74,7 @@ namespace Stm32Common::StreamSession {
             return nullptr;
         }
 
-        void removeAll() {
+        void removeAll() override {
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (sessions[i].isInUse()) {
                     removeSession(&sessions[i]);
@@ -81,7 +82,7 @@ namespace Stm32Common::StreamSession {
             }
         }
 
-        size_t getFreeSessions() {
+        size_t getFreeSessions() override {
             size_t freeSessions = std::size(sessions);
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (sessions[i].isInUse()) freeSessions--;
@@ -89,9 +90,9 @@ namespace Stm32Common::StreamSession {
             return freeSessions;
         }
 
-        virtual void setup() { ; }
+        void setup() override { ; }
 
-        virtual void loop() {
+        void loop() override {
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (sessions[i].isInUse()) {
                     sessions[i].loop();

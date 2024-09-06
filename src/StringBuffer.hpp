@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <libsmart_config.hpp>
 #include <cstddef>
-#include "Helper.hpp"
+#include "StringBufferInterface.hpp"
 #include "Stream.hpp"
 
 #ifdef LIBSMART_ENABLE_STD_FUNCTION
@@ -33,7 +33,7 @@ namespace Stm32Common {
     typedef int64_t buf_size_signed_t;
 
     template<buf_size_t Size>
-    class StringBuffer : public Stream {
+    class StringBuffer : public StringBufferInterface {
     public:
         StringBuffer() { init(); };
 
@@ -44,7 +44,7 @@ namespace Stm32Common {
          *
          * \return True if the StringBuffer is empty, false otherwise.
          */
-        [[nodiscard]] bool isEmpty() const {
+        [[nodiscard]] bool isEmpty() override {
             return head == tail;
         }
 
@@ -55,7 +55,7 @@ namespace Stm32Common {
          *
          * \return True if the StringBuffer is full, false otherwise.
          */
-        [[nodiscard]] bool isFull() const {
+        [[nodiscard]] bool isFull() override {
             return head == Size;
         }
 
@@ -66,7 +66,7 @@ namespace Stm32Common {
          *
          * \return The number of bytes available for writing.
          */
-        [[nodiscard]] buf_size_t getRemainingSpace() const {
+        [[nodiscard]] buf_size_t getRemainingSpace() override {
             return Size - head;
         }
 
@@ -77,7 +77,7 @@ namespace Stm32Common {
          *
          * \return The length of the StringBuffer.
          */
-        [[nodiscard]] buf_size_t getLength() const {
+        [[nodiscard]] buf_size_t getLength() override {
             return head - tail;
         }
 
@@ -102,10 +102,10 @@ namespace Stm32Common {
          * @return The number of bytes written to the StringBuffer.
          */
         buf_size_t write(const char *str) override {
-            return write(str, strlen(str));
+            return write(reinterpret_cast<const uint8_t *>(str), strlen(str));
         }
 
-        buf_size_t write(const void *in, buf_size_t strlen) {
+        buf_size_t write(const uint8_t *in, buf_size_t strlen) override {
             if (in == nullptr) return 0;
             if (strlen == 0) return 0;
             if (getRemainingSpace() < strlen) return 0;
@@ -137,7 +137,7 @@ namespace Stm32Common {
             return ret;
         }
 
-        buf_size_t read(void *out, buf_size_t size) {
+        buf_size_t read(void *out, buf_size_t size) override {
             memset(out, 0, size);
             const buf_size_t sz = std::min(getLength(), size);
             memcpy(out, _getReadPointer(), sz);
@@ -145,7 +145,7 @@ namespace Stm32Common {
         }
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
-        buf_size_t read(StringBuffer *stringBuffer) {
+        buf_size_t read(StringBufferInterface *stringBuffer) override {
             const size_t sz = std::min(getLength(), stringBuffer->getRemainingSpace());
             memcpy(stringBuffer->getWritePointer(), getReadPointer(), sz);
             stringBuffer->add(sz);
@@ -159,19 +159,19 @@ namespace Stm32Common {
             return buffer[tail];
         }
 
-        int peek(buf_size_t pos) {
+        int peek(buf_size_t pos) override {
             if (pos + tail > head || isEmpty()) return -1;
             return buffer[tail + pos];
         }
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
-        uint8_t *getWritePointer() {
+        uint8_t *getWritePointer() override {
             return _getWritePointer();
         }
 #endif
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_READ
-        const uint8_t *getReadPointer() {
+        const uint8_t *getReadPointer() override {
             return _getReadPointer();
         }
 #endif
@@ -186,7 +186,7 @@ namespace Stm32Common {
         }
 
     public:
-        buf_size_t add(const buf_size_t add) {
+        buf_size_t add(const buf_size_t add) override {
             const size_t sz = std::min(getRemainingSpace(), add);
             if (sz == 0) return 0;
             head += sz;
@@ -205,7 +205,7 @@ namespace Stm32Common {
          * @param remove The number of bytes to remove.
          * @return The actual number of bytes removed from the StringBuffer.
          */
-        buf_size_t remove(const buf_size_t remove) {
+        buf_size_t remove(const buf_size_t remove) override {
             const size_t sz = std::min(getLength(), remove);
             if (sz == 0) return 0;
             tail += sz;
@@ -223,7 +223,7 @@ namespace Stm32Common {
          * Clear the StringBuffer by resetting head and tail indices to 0 and
          * clearing the buffer with zero values.
          */
-        void clear() {
+        void clear() override {
             head = 0;
             tail = 0;
             std::memset(buffer, 0, Size);
@@ -268,7 +268,7 @@ namespace Stm32Common {
             //DOES NOTHING
         }
 
-        buf_size_signed_t findPos(const uint8_t c) {
+        buf_size_signed_t findPos(const uint8_t c) override {
             for (buf_size_t i = 0; i < getLength(); i++) {
                 const auto ch = peek(i);
                 if (ch < 0) return -1;
@@ -277,22 +277,13 @@ namespace Stm32Common {
             return -1;
         }
 
-        using onInitCb_t = void();
-        using onEmptyCb_t = void();
-        using onNonEmptyCb_t = void();
-        using onWriteCb_t = void();
-        using onReadCb_t = void();
+
 
 #ifdef LIBSMART_ENABLE_STD_FUNCTION
-        using onInitFn_t = std::function<onInitCb_t>;
-        using onEmptyFn_t = std::function<onEmptyCb_t>;
-        using onNonEmptyFn_t = std::function<onNonEmptyCb_t>;
-        using onWriteFn_t = std::function<onWriteCb_t>;
-        using onReadFn_t = std::function<onReadCb_t>;
 
-        void setOnInitFn(const onInitFn_t &on_init_fn) { onInitFn = on_init_fn; }
-        void setOnEmptyFn(const onEmptyFn_t &on_empty_fn) { onEmptyFn = on_empty_fn; }
-        void setOnNonEmptyFn(const onNonEmptyFn_t &on_non_empty_fn) { onNonEmptyFn = on_non_empty_fn; }
+        void setOnInitFn(const onInitFn_t &on_init_fn) override { onInitFn = on_init_fn; }
+        void setOnEmptyFn(const onEmptyFn_t &on_empty_fn) override { onEmptyFn = on_empty_fn; }
+        void setOnNonEmptyFn(const onNonEmptyFn_t &on_non_empty_fn) override { onNonEmptyFn = on_non_empty_fn; }
 
         /**
          * Set the callback function for write operations.
@@ -304,10 +295,10 @@ namespace Stm32Common {
          *
          * \param on_write_fn The callback function for write operations.
          */
-        void setOnWriteFn(const onWriteFn_t &on_write_fn) { onWriteFn = on_write_fn; }
+        void setOnWriteFn(const onWriteFn_t &on_write_fn) override { onWriteFn = on_write_fn; }
 
 
-        void setOnReadFn(const onReadFn_t &on_read_fn) { onReadFn = on_read_fn; }
+        void setOnReadFn(const onReadFn_t &on_read_fn) override { onReadFn = on_read_fn; }
 
 #endif
 
@@ -345,4 +336,4 @@ namespace Stm32Common {
     };
 }
 
-#endif //LIBSMART_STM32COMMON_STRINGBUFFER_HPP
+#endif

@@ -8,11 +8,12 @@
 
 #include <climits>
 #include "Stream.hpp"
+#include "StreamRxTxInterface.hpp"
 #include "StringBuffer.hpp"
 
 namespace Stm32Common {
     template<buf_size_t bufferSizeRx, buf_size_t bufferSizeTx>
-    class StreamRxTx : public Stream {
+    class StreamRxTx : virtual public StreamRxTxInterface {
     public:
         StreamRxTx() = default;
 
@@ -115,8 +116,8 @@ namespace Stm32Common {
 
         typedef StringBuffer<bufferSizeRx> rxBuffer_t;
         typedef StringBuffer<bufferSizeTx> txBuffer_t;
-        rxBuffer_t *getRxBuffer() { return &rxBuffer; }
-        txBuffer_t *getTxBuffer() { return &txBuffer; }
+        StringBufferInterface *getRxBuffer() override { return &rxBuffer; }
+        StringBufferInterface *getTxBuffer() override { return &txBuffer; }
 
     private:
         /**
