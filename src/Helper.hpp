@@ -7,7 +7,7 @@
 #define LIBSMART_STM32COMMON_HELPER_HPP
 
 #include <libsmart_config.hpp>
-
+#include <main.h>
 
 // #define F(x) x
 typedef char __FlashStringHelper;
