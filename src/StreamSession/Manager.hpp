@@ -25,8 +25,7 @@ namespace Stm32Common::StreamSession {
             if (getSessionById(id) != nullptr) return nullptr;
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (!sessions[i].isInUse()) {
-                    sessions[i].init(id);
-                    // sessions[i].setup();
+                    sessions[i].setupStreamSession(id);
                     return &sessions[i];
                 }
             }
@@ -39,7 +38,7 @@ namespace Stm32Common::StreamSession {
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (&sessions[i] == session && sessions[i].isInUse()) {
                     sessions[i].end();
-                    sessions[i].kill();
+                    sessions[i].endStreamSession();
                 }
             }
         }

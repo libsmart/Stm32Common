@@ -52,7 +52,7 @@ namespace Stm32Common::StreamSession {
          * @param id The unique identifier to be assigned to the session.
          * @note Used by the manager
          */
-        void init(uint32_t id) {
+        void setupStreamSession(uint32_t id) {
             inUse = true;
             this->id = id;
         }
@@ -65,7 +65,7 @@ namespace Stm32Common::StreamSession {
          *
          * @note Used by the manager
          */
-        void kill() {
+        void endStreamSession() {
             inUse = false;
             id = UINT32_MAX;
         }
