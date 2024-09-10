@@ -30,6 +30,8 @@ namespace Stm32Common::StreamSession {
         void removeAll() override { ; }
 
         size_t getFreeSessions() override { return 0; }
+
+        size_t getSessionsInUse() override { return 0; }
     };
 
     inline NullManager nullManager;

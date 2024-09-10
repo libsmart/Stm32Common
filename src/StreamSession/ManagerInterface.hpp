@@ -12,7 +12,14 @@
 namespace Stm32Common::StreamSession {
     class ManagerInterface : public virtual Process::ProcessInterface, public Stm32ItmLogger::Loggable {
     public:
+        ManagerInterface() = default;
+
+        explicit ManagerInterface(Stm32ItmLogger::LoggerInterface *logger)
+            : Loggable(logger) {
+        }
+
         ~ManagerInterface() override = default;
+
 
         /**
          * @brief Creates a new session with the specified identifier.
@@ -85,6 +92,15 @@ namespace Stm32Common::StreamSession {
          */
         virtual size_t getFreeSessions() = 0;
 
+        /**
+         * @brief Retrieves the number of sessions currently in use.
+         *
+         * This pure virtual method must be implemented by any class inheriting from ManagerInterface.
+         * It is responsible for returning the count of sessions that are currently in use.
+         *
+         * @return The number of sessions currently in use as a size_t value.
+         */
+        virtual size_t getSessionsInUse() = 0;
     };
 }
 

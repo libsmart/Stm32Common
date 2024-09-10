@@ -23,6 +23,10 @@ namespace Stm32Common::StreamSession {
         }
 
     protected:
+        virtual bool hasSessionManager() {
+            return sessionMgr != nullptr;
+        }
+
         /**
          * Provides access to the session manager. If the session manager is not available, a null manager is returned.
          *

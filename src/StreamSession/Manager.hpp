@@ -19,16 +19,35 @@ namespace Stm32Common::StreamSession {
                       "StreamSession must be of type StreamSessionInterface");
 
     public:
+        Manager() = default;
+
+        explicit Manager(Stm32ItmLogger::LoggerInterface *logger)
+            : ManagerInterface(logger) {
+        }
+
         ~Manager() override = default;
 
         StreamSessionInterface *getNewSession(uint32_t id) override {
-            if (getSessionById(id) != nullptr) return nullptr;
+            log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)
+                    ->printf("Stm32Common::StreamSession::Manager::getNewSession(0x%08x)\r\n", id);
+
+            if (getSessionById(id) != nullptr) {
+                log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::WARNING)
+                        ->printf("StreamSession with id 0x%08x already exists\r\n", id);
+
+                log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf("Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(), std::size(sessions));
+                return nullptr;
+            }
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (!sessions[i].isInUse()) {
                     sessions[i].setupStreamSession(id);
+
+                    log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf("Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(), std::size(sessions));
                     return &sessions[i];
                 }
             }
+
+            log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf("Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(), std::size(sessions));
             return nullptr;
         }
 
@@ -87,6 +106,10 @@ namespace Stm32Common::StreamSession {
                 if (sessions[i].isInUse()) freeSessions--;
             }
             return freeSessions;
+        }
+
+        size_t getSessionsInUse() override {
+            return std::size(sessions) - getFreeSessions();
         }
 
         void setup() override { ; }
