@@ -107,6 +107,19 @@ long map(const long value, const long inMin, const long inMax, const long outMin
 }
 
 
+/**
+ * @brief Check if the system is currently handling an interrupt.
+ *
+ * This function determines if the system is in an interrupt service routine (ISR)
+ * by checking the VECTACTIVE field of the Interrupt Control and State Register (ICSR).
+ *
+ * @return `true` if the system is within an ISR, `false` otherwise.
+ */
+bool isInIsr() {
+    return (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;
+}
+
+
 #ifdef LIBSMART_OVERWRITE_verbose_terminate_handler
 #if __EXCEPTIONS
 namespace __gnu_cxx {

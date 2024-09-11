@@ -32,6 +32,7 @@ extern "C" {
     void delay(unsigned long ms);
     void delayMicroseconds(uint64_t us);
     long map(long value, long inMin, long inMax, long outMin, long outMax);
+    bool isInIsr();
 
 #ifdef __cplusplus
 }
