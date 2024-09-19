@@ -101,6 +101,8 @@ namespace Stm32Common::StreamSession {
          * @return The number of sessions currently in use as a size_t value.
          */
         virtual size_t getSessionsInUse() = 0;
+
+        virtual void flush() = 0;
     };
 }
 

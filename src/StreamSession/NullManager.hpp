@@ -17,6 +17,8 @@ namespace Stm32Common::StreamSession {
 
         void end() override { ; }
 
+        void flush() override { ; }
+
         StreamSessionInterface *getNewSession(uint32_t id) override { return nullptr; }
 
         void removeSession(StreamSessionInterface *session) override { ; }

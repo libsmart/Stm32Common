@@ -12,16 +12,20 @@
 namespace Stm32Common::StreamSession {
     class NullStreamSession : public StreamSessionInterface {
     public:
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         size_t getWriteBuffer(uint8_t *&buffer) override {
             buffer = nullptr;
             return 0;
         }
+#endif
 
         NullStreamSession() {
             Nameable::setName("NullStreamSession");
         }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         size_t setWrittenBytes(size_t size) override { return 0; }
+#endif
 
         size_t write(uint8_t data) override { return 0; }
 

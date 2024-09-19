@@ -17,6 +17,7 @@ namespace Stm32Common {
     public:
         StreamRxTx() = default;
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         /**
          * @brief Retrieves a write buffer for transmitting data.
          *
@@ -41,6 +42,7 @@ namespace Stm32Common {
         size_t setWrittenBytes(size_t size) override {
             return txBuffer.add(size);
         }
+#endif
 
         /**
          * @brief Writes a single byte of data to the transmit buffer.

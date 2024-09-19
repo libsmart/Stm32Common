@@ -89,6 +89,8 @@ namespace Stm32Common {
         virtual buf_size_t read(StringBufferInterface *stringBuffer) = 0;
 #endif
 
+        using Stream::read;
+
         /**
          * Peek at the byte at the specified position in the buffer.
          *
@@ -98,6 +100,8 @@ namespace Stm32Common {
          * @return The byte at the specified position.
          */
         virtual int peek(buf_size_t pos) = 0;
+
+        using Stream::peek;
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         /**

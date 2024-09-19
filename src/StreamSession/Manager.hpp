@@ -35,19 +35,25 @@ namespace Stm32Common::StreamSession {
                 log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::WARNING)
                         ->printf("StreamSession with id 0x%08x already exists\r\n", id);
 
-                log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf("Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(), std::size(sessions));
+                log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf(
+                    "Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(),
+                    std::size(sessions));
                 return nullptr;
             }
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (!sessions[i].isInUse()) {
                     sessions[i].setupStreamSession(id);
 
-                    log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf("Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(), std::size(sessions));
+                    log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf(
+                        "Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(),
+                        std::size(sessions));
                     return &sessions[i];
                 }
             }
 
-            log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf("Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(), std::size(sessions));
+            log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf(
+                "Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(),
+                std::size(sessions));
             return nullptr;
         }
 
@@ -118,6 +124,14 @@ namespace Stm32Common::StreamSession {
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (sessions[i].isInUse()) {
                     sessions[i].loop();
+                }
+            }
+        }
+
+        void flush() override {
+            for (size_t i = 0; i < MaxSessionCount; i++) {
+                if (sessions[i].isInUse()) {
+                    sessions[i].flush();
                 }
             }
         }

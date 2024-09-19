@@ -11,12 +11,14 @@
 namespace Stm32Common {
     class NullStringBuffer : public StringBufferInterface {
     public:
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         size_t getWriteBuffer(uint8_t *&buffer) override {
             buffer = nullptr;
             return 0;
         }
 
         size_t setWrittenBytes(size_t size) override { return 0; }
+#endif
 
         size_t write(uint8_t data) override { return 0; }
 
@@ -40,11 +42,15 @@ namespace Stm32Common {
 
         buf_size_t read(void *out, buf_size_t size) override { return 0; }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         buf_size_t read(StringBufferInterface *stringBuffer) override { return 0; }
+#endif
 
         int peek(buf_size_t pos) override { return -1; }
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         uint8_t *getWritePointer() override { return nullptr; }
+#endif
 
         const uint8_t *getReadPointer() override { return nullptr; }
 
@@ -56,6 +62,7 @@ namespace Stm32Common {
 
         buf_size_signed_t findPos(uint8_t c) override { return -1; }
 
+#ifdef LIBSMART_ENABLE_STD_FUNCTION
         void setOnInitFn(const onInitFn_t &on_init_fn) override { ; }
 
         void setOnEmptyFn(const onEmptyFn_t &on_empty_fn) override { ; }
@@ -65,6 +72,7 @@ namespace Stm32Common {
         void setOnWriteFn(const onWriteFn_t &on_write_fn) override { ; }
 
         void setOnReadFn(const onReadFn_t &on_read_fn) override { ; }
+#endif
     };
 
     inline NullStringBuffer nullStringBuffer;

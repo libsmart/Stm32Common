@@ -314,7 +314,6 @@ namespace Stm32Common {
          */
         virtual size_t printf(const char *format, ...);
 
-#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
         /**
          * @brief Writes formatted output to the underlying device using a variable argument list.
          *
@@ -328,7 +327,7 @@ namespace Stm32Common {
          * @note This function is an extension to the class Print in arduino.
          */
         virtual size_t vprintf(const char *format, va_list args);
-#endif
+
 #endif
 
 //        size_t println(const __FlashStringHelper *);

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <libsmart_config.hpp>
 #include <cstddef>
+#include "Helper.hpp"
 #include "StringBufferInterface.hpp"
 #include "Stream.hpp"
 
