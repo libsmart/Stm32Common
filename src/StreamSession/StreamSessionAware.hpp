@@ -22,6 +22,13 @@ namespace Stm32Common::StreamSession {
             : sessionMgr(session_mgr) {
         }
 
+        /**
+         * Notifies that data is ready to be transmitted for the given session.
+         *
+         * @param session A pointer to the StreamSessionInterface indicating the session for which the data is ready.
+         */
+        virtual void dataReadyTx(StreamSessionInterface *session) { ; }
+
     protected:
         virtual bool hasSessionManager() {
             return sessionMgr != nullptr;

@@ -121,6 +121,10 @@ namespace Stm32Common {
         StringBufferInterface *getRxBuffer() override { return &rxBuffer; }
         StringBufferInterface *getTxBuffer() override { return &txBuffer; }
 
+    protected:
+        virtual void onWriteTx() { ; }
+        virtual void onWriteRx() { ; }
+
     private:
         /**
          * @class rxBufferClass
@@ -138,6 +142,7 @@ namespace Stm32Common {
         protected:
             void onWrite() override {
                 StringBuffer<bufferSizeRx>::onWrite();
+                streamRxTxInstance.onWriteRx();
             }
 
             StreamRxTx &streamRxTxInstance;
@@ -160,6 +165,7 @@ namespace Stm32Common {
         protected:
             void onWrite() override {
                 StringBuffer<bufferSizeTx>::onWrite();
+                streamRxTxInstance.onWriteTx();
             }
 
             StreamRxTx &streamRxTxInstance;

@@ -12,6 +12,10 @@
 #include "Process/ProcessInterface.hpp"
 
 namespace Stm32Common::StreamSession {
+
+    class StreamSessionAware;
+    class ManagerInterface;
+
     template<class StreamSessionT, size_t MaxSessionCount>
     class Manager;
 
@@ -49,12 +53,15 @@ namespace Stm32Common::StreamSession {
          * This method marks the session as in use and assigns the provided
          * unique identifier to the session.
          *
+         * @param sessionManager
          * @param id The unique identifier to be assigned to the session.
          * @note Used by the manager
          */
-        virtual void setupStreamSession(uint32_t id) {
+        virtual void setupStreamSession(StreamSessionAware *sessionOwner, ManagerInterface *sessionManager, uint32_t id) {
             inUse = true;
             this->id = id;
+            this->sessionOwner = sessionOwner;
+            this->sessionManager = sessionManager;
         }
 
         /**
@@ -68,10 +75,14 @@ namespace Stm32Common::StreamSession {
         virtual void endStreamSession() {
             inUse = false;
             id = UINT32_MAX;
+            sessionManager = nullptr;
+            sessionOwner = nullptr;
         }
 
         bool inUse = false;
         uint32_t id = UINT32_MAX;
+        ManagerInterface *sessionManager{};
+        StreamSessionAware *sessionOwner{};
     };
 }
 #endif

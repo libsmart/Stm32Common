@@ -5,11 +5,14 @@
 
 #ifndef LIBSMART_STM32COMMON_STREAMSESSION_MANAGERINTERFACE_HPP
 #define LIBSMART_STM32COMMON_STREAMSESSION_MANAGERINTERFACE_HPP
+
 #include <main.h>
 #include "StreamSessionInterface.hpp"
 #include "Process/ProcessInterface.hpp"
 
 namespace Stm32Common::StreamSession {
+    class StreamSessionAware;
+
     class ManagerInterface : public virtual Process::ProcessInterface, public Stm32ItmLogger::Loggable {
     public:
         ManagerInterface() = default;
@@ -30,7 +33,7 @@ namespace Stm32Common::StreamSession {
          * @param id The unique identifier for the new session.
          * @return A pointer to the newly created StreamSessionInterface instance.
          */
-        virtual StreamSessionInterface *getNewSession(uint32_t id) = 0;
+        virtual StreamSessionInterface *getNewSession(StreamSessionAware *sessionOwner, uint32_t id) = 0;
 
         /**
          * @brief Removes the specified session.
@@ -102,7 +105,23 @@ namespace Stm32Common::StreamSession {
          */
         virtual size_t getSessionsInUse() = 0;
 
+        /**
+         * @brief Flushes all pending operations.
+         *
+         * This pure virtual method must be implemented by any class inheriting from ManagerInterface.
+         * It ensures that all pending operations are completed and any buffers are cleared.
+         */
         virtual void flush() = 0;
+
+        /**
+         * @brief Signals that data is ready for transmission for the specified session.
+         *
+         * This method should be overridden by any class inheriting from ManagerInterface. It is called when data is prepared
+         * and ready to be transmitted for the given StreamSessionInterface instance.
+         *
+         * @param session A pointer to the StreamSessionInterface instance for which data is ready for transmission.
+         */
+        virtual void dataReadyTx(StreamSessionInterface *session) { ; }
     };
 }
 

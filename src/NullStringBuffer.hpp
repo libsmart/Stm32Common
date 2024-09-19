@@ -52,7 +52,9 @@ namespace Stm32Common {
         uint8_t *getWritePointer() override { return nullptr; }
 #endif
 
+#ifdef LIBSMART_ENABLE_DIRECT_BUFFER_READ
         const uint8_t *getReadPointer() override { return nullptr; }
+#endif
 
         buf_size_t add(buf_size_t add) override { return 0; }
 

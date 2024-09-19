@@ -7,7 +7,6 @@
 #define LIBSMART_STM32COMMON_STREAMSESSION_ECHOSTREAMSESSION_HPP
 
 #include "Helper.hpp"
-#include "NullStringBuffer.hpp"
 #include "StreamRxTx.hpp"
 #include "StreamSessionInterface.hpp"
 
@@ -27,10 +26,13 @@ namespace Stm32Common::StreamSession {
         void setup() override { ; }
 
         void loop() override {
-            while(available() > 0) {
+            while (available() > 0) {
                 getTxBuffer()->write(getRxBuffer()->read());
             }
 
+            if (getTxBuffer()->available() > 0) {
+                sessionOwner->dataReadyTx(this);
+            }
         }
 
         void end() override {
@@ -38,12 +40,15 @@ namespace Stm32Common::StreamSession {
             getTxBuffer()->clear();
         }
 
-
         void flush() override {
             StreamRxTx::flush();
+        }
 
+    protected:
+        void onWriteTx() override {
+            StreamRxTx::onWriteTx();
+            loop();
         }
     };
-
 }
 #endif

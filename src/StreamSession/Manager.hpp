@@ -27,7 +27,7 @@ namespace Stm32Common::StreamSession {
 
         ~Manager() override = default;
 
-        StreamSessionInterface *getNewSession(uint32_t id) override {
+        StreamSessionInterface *getNewSession(StreamSessionAware *sessionOwner, uint32_t id) override {
             log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)
                     ->printf("Stm32Common::StreamSession::Manager::getNewSession(0x%08x)\r\n", id);
 
@@ -42,7 +42,7 @@ namespace Stm32Common::StreamSession {
             }
             for (size_t i = 0; i < MaxSessionCount; i++) {
                 if (!sessions[i].isInUse()) {
-                    sessions[i].setupStreamSession(id);
+                    sessions[i].setupStreamSession(sessionOwner, this, id);
 
                     log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)->printf(
                         "Stm32Common::StreamSession::Manager sessions in use = %lu/%lu\r\n", getSessionsInUse(),
@@ -136,7 +136,7 @@ namespace Stm32Common::StreamSession {
             }
         }
 
-        virtual void end() { removeAll(); }
+        void end() override { removeAll(); }
 
     private:
         std::array<StreamSessionT, MaxSessionCount> sessions = {};
