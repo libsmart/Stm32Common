@@ -19,6 +19,7 @@ typedef char __FlashStringHelper;
 #define LIBSMART_NOF(...)
 
 #ifndef __cplusplus
+#include <stdbool.h>
 #define min(a, b) ((a)<(b)?(a):(b))
 #define max(a, b) ((a)>(b)?(a):(b))
 #endif
@@ -38,4 +39,4 @@ extern "C" {
 }
 #endif
 
-#endif //LIBSMART_STM32COMMON_HELPER_HPP
+#endif
