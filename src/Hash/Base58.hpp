@@ -25,6 +25,15 @@
 namespace Stm32Common::Hash {
     class Base58 {
     public:
+        /**
+         * Encodes binary data into a Base58-encoded string.
+         *
+         * @param b58 The buffer where the Base58-encoded string will be written.
+         * @param b58sz The size of the buffer `b58` on input and the size of the written string on output.
+         * @param data The binary data to encode.
+         * @param binsz The size of the binary data.
+         * @return True if encoding was successful, false otherwise (e.g., if the buffer size is insufficient).
+         */
         static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz) {
             const auto bin = static_cast<const uint8_t *>(data);
             int carry;
@@ -67,6 +76,15 @@ namespace Stm32Common::Hash {
             return true;
         }
 
+        /**
+         * Decodes a Base58-encoded string into binary data.
+         *
+         * @param bin The buffer where the binary data will be written.
+         * @param binszp On input, points to the size of the `bin` buffer. On output, it points to the size of the decoded binary data.
+         * @param b58 The Base58-encoded string to decode.
+         * @param b58sz The size of the Base58-encoded string. If zero, the function will calculate the length using `strlen`.
+         * @return True if decoding was successful, false otherwise (e.g., if the input string contains invalid characters or the `bin` buffer is too small).
+         */
         static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
             size_t binsz = *binszp;
             const auto *b58u = reinterpret_cast<const unsigned char *>(b58);
