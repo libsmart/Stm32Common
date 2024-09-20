@@ -29,7 +29,7 @@ namespace Stm32Common::StreamSession {
 
         StreamSessionInterface *getNewSession(StreamSessionAware *sessionOwner, uint32_t id) override {
             log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::INFORMATIONAL)
-                    ->printf("Stm32Common::StreamSession::Manager::getNewSession(0x%08x)\r\n", id);
+                    ->printf("Stm32Common::StreamSession::Manager::getNewSession(0x%08x, 0x%08x)\r\n", sessionOwner, id);
 
             if (getSessionById(id) != nullptr) {
                 log()->setSeverity(Stm32ItmLogger::LoggerInterface::Severity::WARNING)
