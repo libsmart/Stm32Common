@@ -48,20 +48,17 @@ uint64_t micros() {
 
 
 /**
- * @brief Delays the program execution for a specified number of milliseconds.
+ * @brief Delays the execution for a specified amount of milliseconds.
  *
- * This function provides a portable way to introduce a delay in the program execution. The actual implementation
- * depends on the underlying platform.
+ * This function pauses the current thread for a given number of milliseconds. If the `tx_thread_sleep`
+ * function is available, it uses that function with a minimum sleep duration converted to timer ticks.
+ * Otherwise, it falls back to using the HAL_Delay function.
  *
  * @param ms The number of milliseconds to delay.
- *
- * @note This function does not guarantee precise timing due to variations in system clock frequency and other factors.
- *
- * @see HAL_Delay
  */
 void delay(unsigned long ms) {
 #ifdef tx_thread_sleep
-    tx_thread_sleep((ms * TX_TIMER_TICKS_PER_SECOND) / 1000);
+    tx_thread_sleep(std::max((ms * TX_TIMER_TICKS_PER_SECOND) / 1000, 1UL));
 #else
     HAL_Delay(ms);
 #endif
