@@ -17,6 +17,10 @@ typedef char __FlashStringHelper;
 #define LIBSMART_UNUSED(X) (void)X
 #define LIBSMART_NOP(...) __asm volatile ("nop")
 #define LIBSMART_NOF(...)
+#define LIBSMART_REVERSE_BYTES(pData, nDataSize) \
+  {unsigned char swap, *lo = ((unsigned char *)(pData)), *hi = ((unsigned char *)(pData)) + (nDataSize) - 1; \
+  while (lo < hi) { swap = *lo; *lo++ = *hi; *hi-- = swap; }}
+
 
 #ifndef __cplusplus
 #include <stdbool.h>
