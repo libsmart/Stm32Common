@@ -48,6 +48,8 @@ namespace Stm32Common::StreamSession {
         void loop() override { ; }
 
         void end() override { ; }
+
+        void errorHandler() override { ; }
     };
 
     inline NullStreamSession nullStreamSession;

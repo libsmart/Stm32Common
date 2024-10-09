@@ -138,6 +138,8 @@ namespace Stm32Common::StreamSession {
 
         void end() override { removeAll(); }
 
+        void errorHandler() override { ; }
+
     private:
         std::array<StreamSessionT, MaxSessionCount> sessions = {};
     };

@@ -43,6 +43,14 @@ namespace Stm32Common::Process {
          * or perform any other teardown operations required after the process has completed.
          */
         virtual void end() = 0;
+
+        /**
+         * @brief Pure virtual function to handle error conditions in the process.
+         *
+         * This method must be implemented by any class that inherits from ProcessInterface.
+         * It should define the logic for managing errors, recovery steps, or logging error information.
+         */
+        virtual void errorHandler() = 0;
     };
 }
 #endif
