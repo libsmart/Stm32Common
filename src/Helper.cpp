@@ -5,6 +5,7 @@
 
 #include <libsmart_config.hpp>
 #include "Helper.hpp"
+#include <algorithm>
 #include "main.h"
 #ifdef LIBSMART_USE_THREADX
 #include "tx_api.h"
