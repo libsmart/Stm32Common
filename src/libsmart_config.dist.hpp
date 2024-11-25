@@ -63,6 +63,13 @@
 
 
 /**
+ * Buffer size for vprintf operations without direct buffer write.
+ */
+#define LIBSMART_STM32COMMON_VPRINTF_BUFFER_SIZE 256
+
+
+
+/**
  * Enable or disable overwriting of the verbose_terminate_handler.
  * Overwriting reduces the binary size by several 10kB.
  * @see __gnu_cxx::__verbose_terminate_handler()

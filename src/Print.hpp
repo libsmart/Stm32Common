@@ -120,6 +120,7 @@ namespace Stm32Common {
          *
          * This is a pure virtual function that must be implemented by the derived class.
          * It returns the current buffer to be written to the underlying device.
+         * Return buffer=nullptr to indicate that the underlying transport does not support direct buffer write.
          *
          * @param[out] buffer A reference to a pointer that will store the write buffer.
          * @return The size of the write buffer.
@@ -177,6 +178,19 @@ namespace Stm32Common {
          * @return The actual number of bytes written to the underlying device.
          */
         virtual size_t write(const uint8_t *inputBytes, size_t size);
+
+        /**
+         * @brief Writes an array of bytes to the underlying device.
+         *
+         * This function sends a specified number of bytes from a buffer to the underlying device.
+         * It continues to write bytes from the buffer until it reaches the specified size or
+         * encounters a write failure.
+         *
+         * @param buffer Pointer to the array of bytes to write.
+         * @param size Number of bytes to write from the buffer.
+         * @return The actual number of bytes successfully written to the device.
+         */
+        virtual size_t write_classic(const uint8_t *inputBytes, size_t size);
 
         /**
          * @brief Writes the specified number of bytes to the underlying device.
@@ -327,6 +341,19 @@ namespace Stm32Common {
          * @note This function is an extension to the class Print in arduino.
          */
         virtual size_t vprintf(const char *format, va_list args);
+
+        /**
+         * @brief Formats a string and writes it to the underlying device using a va_list.
+         *
+         * This function takes a format string and a va_list of arguments, formats the string,
+         * and writes the resulting string to the underlying device. The formatted string is
+         * stored in a buffer before being written.
+         *
+         * @param format The format string that determines the output format.
+         * @param args The va_list of arguments to be formatted according to the format string.
+         * @return The number of bytes written to the underlying device.
+         */
+        virtual size_t vprintf_classic(const char *format, va_list args);
 
 #endif
 

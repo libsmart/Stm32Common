@@ -112,19 +112,25 @@ size_t Print::printFloat(double number, uint8_t digits)
 #endif
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
-
 size_t Print::write(const uint8_t *inputBytes, size_t size) {
     uint8_t *txBuffer;
     auto szTxBuffer = getWriteBuffer(txBuffer);
+    if (txBuffer == nullptr) {
+        return write_classic(inputBytes, size);
+    }
     if (size > szTxBuffer) {
         size = szTxBuffer;
     }
     memcpy(txBuffer, inputBytes, size);
     return setWrittenBytes(size);
 }
-
 #else
 size_t Print::write(const uint8_t *buffer, size_t size) {
+    return write_classic(buffer, size);
+}
+#endif //LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
+
+size_t Print::write_classic(const uint8_t *buffer, size_t size) {
     size_t n = 0;
     while (size--) {
         if (write(*buffer++)) n++;
@@ -132,7 +138,6 @@ size_t Print::write(const uint8_t *buffer, size_t size) {
     }
     return n;
 }
-#endif //LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
 
 #ifdef LIBSMART_ENABLE_PRINTF
 size_t Print::print(const std::string &prnt_string) {
@@ -201,10 +206,12 @@ size_t Print::printf(const char *format, ...) {
 
 
 #ifdef LIBSMART_ENABLE_DIRECT_BUFFER_WRITE
-
 size_t Print::vprintf(const char *format, va_list args) {
     uint8_t *buffer;
     auto szBuffer = getWriteBuffer(buffer);
+    if (buffer == nullptr) {
+        return vprintf_classic(format, args);
+    }
     int len = ::vsnprintf(reinterpret_cast<char *>(buffer), szBuffer, format, args);
     if (len < 0) return 0;
     return setWrittenBytes(len < szBuffer ? len : sizeof buffer - 1);
@@ -212,14 +219,17 @@ size_t Print::vprintf(const char *format, va_list args) {
 
 #else
 size_t Print::vprintf(const char *format, va_list args) {
-    uint8_t buffer[256];
+    return vprintf_classic(format, args);
+}
+#endif
+size_t Print::vprintf_classic(const char *format, va_list args) {
+    uint8_t buffer[LIBSMART_STM32COMMON_VPRINTF_BUFFER_SIZE]{};
     auto szBuffer = sizeof buffer;
     int len = ::vsnprintf(reinterpret_cast<char *>(buffer), szBuffer, format, args);
     if (len < 0) return 0;
     auto bytesToWrite = len < szBuffer ? len : sizeof buffer - 1;
-    return write(buffer, bytesToWrite);
+    return write_classic(buffer, bytesToWrite);
 }
-#endif
 #endif
 
 #ifdef LIBSMART_ENABLE_PRINTF
