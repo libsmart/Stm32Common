@@ -33,6 +33,8 @@ namespace Stm32Common {
      */
     class Printable {
     public:
+        virtual ~Printable() = default;
+
         /**
          * @brief An abstract virtual function that allows classes to be printed.
          *
