@@ -20,7 +20,12 @@ typedef char __FlashStringHelper;
 #define LIBSMART_REVERSE_BYTES(pData, nDataSize) \
   {unsigned char swap, *lo = ((unsigned char *)(pData)), *hi = ((unsigned char *)(pData)) + (nDataSize) - 1; \
   while (lo < hi) { swap = *lo; *lo++ = *hi; *hi-- = swap; }}
-
+#define LIBSMART_MS_TO_US(t) (t * 1000)
+#define LIBSMART_SECONDS_TO_MS(t) (t * 1000)
+#define LIBSMART_MINUTES_TO_MS(t) LIBSMART_SECONDS_TO_MS(t * 60)
+#define LIBSMART_HOURS_TO_MS(t) LIBSMART_MINUTES_TO_MS(t * 60)
+#define LIBSMART_DAYS_TO_MS(t) LIBSMART_HOURS_TO_MS(t * 24)
+#define LIBSMART_WEEKS_TO_MS(t) LIBSMART_DAYS_TO_MS(t * 7)
 
 #ifndef __cplusplus
 #include <stdbool.h>
