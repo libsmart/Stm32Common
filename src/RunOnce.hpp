@@ -7,8 +7,8 @@
 #define LIBSMART_STM32COMMON_RUNONCE_HPP
 
 #include <libsmart_config.hpp>
-
 #include "Helper.hpp"
+#include "RunEvery.hpp"
 
 #ifdef LIBSMART_ENABLE_STD_FUNCTION
 

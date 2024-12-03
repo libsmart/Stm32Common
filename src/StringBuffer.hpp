@@ -139,6 +139,7 @@ namespace Stm32Common {
         }
 
         buf_size_t read(void *out, buf_size_t size) override {
+            if (out == nullptr) return 0;
             memset(out, 0, size);
             const buf_size_t sz = std::min(getLength(), size);
             memcpy(out, _getReadPointer(), sz);
