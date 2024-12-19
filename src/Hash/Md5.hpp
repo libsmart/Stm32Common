@@ -39,12 +39,14 @@ namespace Stm32Common::Hash {
          *
          * See https://en.wikipedia.org/wiki/MD5 for more information.
          *
-         * @param string A byte array with length that is a multiple of 64 bytes
+         * @param buffer A byte array with length that is a multiple of 64 bytes
          * containing a string of characters; array will be modified by the function
-         * @param string_len Number of characters in the string to be hashed
+         * @param string_length Number of characters in the string to be hashed
          * @param hash_result A 16-byte array to hold/return the hash calculation
+         *
+         * @warning buffer will be MODIFIED by the function!
          */
-        static void inplace_md5_sum(uint8_t *string,
+        static void inplace_md5_sum(uint8_t *buffer,
                              const uint32_t string_length,
                              uint8_t *hash_result) {
             // see https://en.wikipedia.org/wiki/MD5#Pseudocode for MD5 implementation
@@ -94,12 +96,12 @@ namespace Stm32Common::Hash {
             uint32_t chunks = get_md5_chunk_count(string_length);
 
             // add 1-bit padding followed by the appropriate amount of 0 bit padding
-            string[string_length] = 0x80;
+            buffer[string_length] = 0x80;
 
             // after accounting for the string and the addition byte added above, add
             // enough padding to fill out to the end of the final 512-bit chunk
             memset(
-                &string[string_length + 1],
+                &buffer[string_length + 1],
                 0,
                 chunks * MD5_CHUNK_BYTES - (string_length + 1)
             );
@@ -107,7 +109,7 @@ namespace Stm32Common::Hash {
             // reinterpret the last 8 bytes of the padding as a unsigned int; per the MD5
             // specification, this should hold the message length in bits mod 2^64
             uint64_t *string_bit_length =
-                    (uint64_t *) &string[MD5_CHUNK_BYTES * chunks - 8];
+                    (uint64_t *) &buffer[MD5_CHUNK_BYTES * chunks - 8];
 
             // set the string bit length
             *string_bit_length = string_length * 8;
@@ -115,7 +117,7 @@ namespace Stm32Common::Hash {
             // iterate over each chunk in the padded message
             for (int chunk_number = 0; chunk_number < chunks; chunk_number++) {
                 // reinterpret the current 512-bit chunk as 16 32-bit unsigned integers
-                uint32_t *M = (uint32_t *) &string[chunk_number * MD5_CHUNK_BYTES];
+                uint32_t *M = (uint32_t *) &buffer[chunk_number * MD5_CHUNK_BYTES];
 
                 // initialize the values of A, B, C, D
                 uint32_t A = A0;
