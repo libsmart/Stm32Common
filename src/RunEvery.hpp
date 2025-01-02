@@ -125,6 +125,18 @@ namespace Stm32Common {
 
 
         /**
+         * @brief Retrieve the interval value of the RunEvery object.
+         *
+         * This method returns the interval in milliseconds that is set for the
+         * RunEvery object. The interval defines the period between successive
+         * executions of the associated function.
+         *
+         * @return The interval value in milliseconds.
+         */
+        virtual uint32_t getInterval() const { return _interval_ms; }
+
+
+        /**
          * @brief Set the delay in milliseconds for the RunEvery object.
          *
          * This method sets the delay in milliseconds for the RunEvery object. The delay determines the interval at
@@ -135,6 +147,16 @@ namespace Stm32Common {
          * @return void
          */
         virtual void setDelay(const uint32_t delay_ms) { _delay_ms = delay_ms; }
+
+
+        /**
+         * @brief Retrieve the delay value configured in the RunEvery object.
+         *
+         * This method returns the delay value in milliseconds that is associated with the RunEvery object.
+         *
+         * @return The delay value in milliseconds.
+         */
+        virtual uint32_t getDelay() const { return _delay_ms; }
 
 
         /**
@@ -231,7 +253,7 @@ namespace Stm32Common {
 
     protected:
         /**
-         * @brief Represents the timestamp of the last execution of a particular function or task.
+         * @brief Represents the timestamp of the last execution of the function.
          */
         uint32_t _last_last_run_ms = millis();
 
@@ -246,12 +268,12 @@ namespace Stm32Common {
         uint32_t _run_count_max = {};
 
         /**
-         * @brief Represents the delay in milliseconds for the RunOnce utility class.
+         * @brief The delay in milliseconds specifies the time, when the function is first run.
          */
         uint32_t _delay_ms = {};
 
         /**
-         * @brief The interval in milliseconds.
+         * @brief The interval in milliseconds defines the time between periodic runs of the function.
          */
         uint32_t _interval_ms = {};
     };
