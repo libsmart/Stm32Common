@@ -27,6 +27,9 @@ typedef char __FlashStringHelper;
 #define LIBSMART_DAYS_TO_MS(t) LIBSMART_HOURS_TO_MS(t * 24)
 #define LIBSMART_WEEKS_TO_MS(t) LIBSMART_DAYS_TO_MS(t * 7)
 
+#define LIBSMART_ARRAYFILL(x) {std::memset(x, 0, sizeof(x));}
+#define LIBSMART_ARRAYSIZE(x) (sizeof(x) / sizeof((x)[0]))
+
 #ifndef __cplusplus
 #include <stdbool.h>
 #define min(a, b) ((a)<(b)?(a):(b))
