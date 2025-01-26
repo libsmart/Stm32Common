@@ -26,7 +26,7 @@ namespace Stm32Common::String {
     template<std::size_t N>
     class FixedString : public BasePrint {
         // static constexpr auto N_CORR = N + N % 4 - 1;
-        std::array<char, N + 1> _data{}; // +1 für Null-Terminierung
+        std::array<char, N + 1> _data{}; // +1 for null termination
 
     public:
         FixedString() = default;
