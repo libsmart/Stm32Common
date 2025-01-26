@@ -30,6 +30,12 @@ namespace Stm32Common {
     typedef size_t buf_size_t;
     typedef int64_t buf_size_signed_t;
 
+    /**
+     * Interface for StringBuffer operations.
+     *
+     * StringBufferInterface provides a set of methods for reading,
+     * writing, and managing a circular buffer of data.
+     */
     class StringBufferInterface : public Stream {
     public:
         /**

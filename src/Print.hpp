@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <cstring>
 #include <cstdarg>
+#include "BasePrint.hpp"
 #include "Printable.hpp"
 
 #define DEC 10
@@ -56,7 +57,6 @@
 #endif
 
 namespace Stm32Common {
-
     /**
      * @brief The Print class provides a set of functions for printing data to an underlying device.
      *
@@ -71,44 +71,13 @@ namespace Stm32Common {
      * The Print class is an abstract class and must be subclassed to implement the write() and
      * availableForWrite() functions, which are used to write data to the underlying device.
      */
-    class Print {
-    public:
-        virtual ~Print() = default;
-
-    private:
+    class Print : public BasePrint {
         int write_error = 0;
-
-        /**
-         * @brief Prints a number to the underlying device.
-         *
-         * This function converts an unsigned long number into a character string and writes it to the underlying device.
-         * The number is converted to the specified base and the resulting character string is left aligned.
-         * The function returns the number of bytes written to the underlying device.
-         *
-         * @param n The number to be printed.
-         * @param base The base to use for conversion (default is 10).
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t printNumber(unsigned long n, uint8_t base);
-
-        /**
-         * @brief Prints a floating-point number to the underlying device.
-         *
-         * This function converts a double precision floating-point number into a character string and writes it to
-         * the underlying device. The number is rounded to the specified number of digits after the decimal point.
-         *
-         * @param number The number to be printed.
-         * @param digits The number of digits after the decimal point (default is 2).
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t printFloat(double number, uint8_t digits);
 
     protected:
         void setWriteError(int err = 1) { write_error = err; }
 
     public:
-        Print() : write_error(0) {}
-
         [[nodiscard]] int getWriteError() const { return write_error; }
 
         void clearWriteError() { setWriteError(0); }
@@ -150,22 +119,7 @@ namespace Stm32Common {
          * @param data The byte to be written.
          * @return The number of bytes written. In most cases, this will be 1, unless there was an error during writing.
          */
-        virtual size_t write(uint8_t data) = 0;
-
-        /**
-         * @brief Writes a null-terminated string to the underlying device.
-         *
-         * This function writes a null-terminated string to the underlying device.
-         * The string is represented by the inputString parameter, which is a pointer to a const char array.
-         * The function returns the number of bytes written to the underlying device.
-         *
-         * @param inputString A pointer to a null-terminated string to write.
-         * @return The number of bytes written to the underlying device.
-         */
-        virtual size_t write(const char *inputString) {
-            if (inputString == nullptr) return 0;
-            return write(reinterpret_cast<const uint8_t *>(inputString), strlen(inputString));
-        }
+        size_t write(uint8_t data) override = 0;
 
         /**
          * @brief Writes the specified number of bytes to the underlying device.
@@ -177,34 +131,7 @@ namespace Stm32Common {
          * @param size The number of bytes to write.
          * @return The actual number of bytes written to the underlying device.
          */
-        virtual size_t write(const uint8_t *inputBytes, size_t size);
-
-        /**
-         * @brief Writes an array of bytes to the underlying device.
-         *
-         * This function sends a specified number of bytes from a buffer to the underlying device.
-         * It continues to write bytes from the buffer until it reaches the specified size or
-         * encounters a write failure.
-         *
-         * @param buffer Pointer to the array of bytes to write.
-         * @param size Number of bytes to write from the buffer.
-         * @return The actual number of bytes successfully written to the device.
-         */
-        virtual size_t write_classic(const uint8_t *inputBytes, size_t size);
-
-        /**
-         * @brief Writes the specified number of bytes to the underlying device.
-         *
-         * This function writes the specified number of bytes from the inputBytes
-         * array to the underlying device and returns the actual number of bytes written.
-         *
-         * @param inputBytes A pointer to an array of characters.
-         * @param size The number of bytes to write.
-         * @return The actual number of bytes written to the underlying device.
-         */
-        size_t write(const char *inputBytes, size_t size) {
-            return write((const uint8_t *) inputBytes, size);
-        }
+        size_t write(const uint8_t *inputBytes, size_t size) override;
 
         /**
          * @brief Retrieves the number of bytes available for writing to the underlying device, before the device starts
@@ -215,251 +142,7 @@ namespace Stm32Common {
          *
          * @return The number of bytes available for writing.
          */
-        virtual int availableForWrite() = 0;
-
-
-        //        size_t print(const __FlashStringHelper *);
-        //        size_t print(const String &);
-#ifdef LIBSMART_ENABLE_STD_STRING
-
-        /**
-         * @brief Prints a string to the underlying device.
-         *
-         * @param prnt_string The string to be printed.
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(const std::string &prnt_string);
-
-#endif
-
-        /**
-         * @brief Writes a null-terminated string to the underlying device.
-         *
-         * @param prnt_cstring A pointer to a null-terminated string to write.
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(const char prnt_cstring[]);
-
-        /**
-         * @brief Writes a single character to the underlying device.
-         *
-         * @param prnt_char The character to be written.
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(char prnt_char);
-
-        /**
-         * @brief Writes an unsigned character value to the underlying device.
-         *
-         * @param prnt_unsigned_char The unsigned character value to be printed.
-         * @param base The base to use for conversion (default is DEC).
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(unsigned char prnt_unsigned_char, int base = DEC);
-
-        /**
-         * @brief Prints an integer to the underlying device.
-         *
-         * @param prnt_int The integer to be printed.
-         * @param base The base to use for conversion (default is DEC).
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(int prnt_int, int base = DEC);
-
-        /**
-         * @brief Prints an unsigned integer to the underlying device.
-         *
-         * @param prnt_unsigned_int The unsigned integer to be printed.
-         * @param base The base to use for conversion (default is DEC).
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(unsigned int prnt_unsigned_int, int base = DEC);
-
-        /**
-         * @brief Prints a long integer to the underlying device.
-         *
-         * @param prnt_long The long integer to be printed.
-         * @param base The base to use for conversion (default is 10).
-         * @return The number of bytes written to the underlying device.
-         */
-        size_t print(long prnt_long, int base = DEC);
-
-        /**
-         * @brief Prints an unsigned long integer to the underlying device.
-         *
-         * @param prnt_unsigned_long The unsigned long integer to be printed.
-         * @param base The base to use for conversion (default is 10).
-         * @return The number of characters printed.
-         */
-        size_t print(unsigned long prnt_unsigned_long, int base = DEC);
-
-        /**
-         * @brief Prints a floating-point number to the underlying device.
-         *
-         * @param prnt_double The floating-point number to be printed.
-         * @param digits The number of decimal places to round the number to (default is 2).
-         * @return The number of characters printed to the standard output.
-         */
-        size_t print(double prnt_double, int digits = 2);
-
-        /**
-         * @brief Prints the given object using its printTo() function.
-         *
-         * @param prnt_object The object to be printed.
-         * @return The number of characters printed.
-         *
-         * @see Printable::printTo()
-         */
-        size_t print(const Printable &prnt_object);
-
-#ifdef LIBSMART_ENABLE_PRINTF
-
-        /**
-         * @brief Writes formatted output to the underlying device using a variable argument list.
-         *
-         * This function is similar to the standard C library function vprintf().
-         * It takes a format string and a variable argument list to generate formatted output.
-         * The formatted output is written to the underlying device.
-         *
-         * @param format The format string.
-         * @param args The variable argument list.
-         * @return The number of bytes written to the underlying device.
-         * @note This function is an extension to the class Print in arduino.
-         */
-        virtual size_t printf(const char *format, ...);
-
-        /**
-         * @brief Writes formatted output to the underlying device using a variable argument list.
-         *
-         * This function is similar to the standard C library function vprintf().
-         * It takes a format string and a variable argument list to generate formatted output.
-         * The formatted output is written to the underlying device.
-         *
-         * @param format The format string.
-         * @param args The variable argument list.
-         * @return The number of bytes written to the underlying device.
-         * @note This function is an extension to the class Print in arduino.
-         */
-        virtual size_t vprintf(const char *format, va_list args);
-
-        /**
-         * @brief Formats a string and writes it to the underlying device using a va_list.
-         *
-         * This function takes a format string and a va_list of arguments, formats the string,
-         * and writes the resulting string to the underlying device. The formatted string is
-         * stored in a buffer before being written.
-         *
-         * @param format The format string that determines the output format.
-         * @param args The va_list of arguments to be formatted according to the format string.
-         * @return The number of bytes written to the underlying device.
-         */
-        virtual size_t vprintf_classic(const char *format, va_list args);
-
-#endif
-
-//        size_t println(const __FlashStringHelper *);
-//        size_t println(const String &s);
-#ifdef LIBSMART_ENABLE_STD_STRING
-
-        /**
-         * @brief Prints a string followed by a new line.
-         *
-         * @param prnt_string The string to be printed.
-         * @return The number of characters printed, including the new line character.
-         * @note This function is an extension to the class Print in arduino.
-         */
-        size_t println(const std::string &prnt_string);
-
-#endif
-
-        /**
-         * @brief Prints the specified string followed by a newline character.
-         *
-         * @param prnt_cstring The string to be printed.
-         * @return The number of characters printed.
-         */
-        size_t println(const char prnt_cstring[]);
-
-        /**
-         * @brief Prints a single character followed by a newline character.
-         *
-         * @param prnt_char The character to be printed.
-         * @return The total number of characters printed, including the newline character.
-         */
-        size_t println(char prnt_char);
-
-        /**
-         * @brief Prints an unsigned char value followed by a newline character.
-         *
-         * @param prnt_unsigned_char The unsigned char value to print.
-         * @param base The base to use for printing the value (default is DEC).
-         * @return The total number of characters printed (including the newline character).
-         */
-        size_t println(unsigned char prnt_unsigned_char, int base = DEC);
-
-        /**
-         * @brief Prints an integer followed by a newline character.
-         *
-         * @param prnt_int The integer to be printed.
-         * @param base The base of the number system used to format the integer (default: DEC).
-         * @return The number of characters printed.
-         */
-        size_t println(int prnt_int, int base = DEC);
-
-        /**
-         * @brief Prints an unsigned integer followed by a newline character.
-         *
-         * @param prnt_unsigned_int The unsigned integer to be printed.
-         * @param base The base in which the value should be printed. It defaults to DEC (decimal).
-         * @return The number of characters printed, including the newline character.
-         */
-        size_t println(unsigned int prnt_unsigned_int, int base = DEC);
-
-        /**
-         * @brief Prints a long value followed by a line break.
-         *
-         * @param prnt_long The long value to be printed.
-         * @param base (optional) The base in which the value should be printed. Defaults to DEC (decimal).
-         * @return The number of characters printed.
-         */
-        size_t println(long prnt_long, int base = DEC);
-
-        /**
-         * @brief Prints an unsigned long value followed by a newline character.
-         *
-         * @param prnt_unsigned_long The unsigned long value to be printed.
-         * @param base The base in which the value should be printed (default is decimal).
-         * @return The number of characters printed, including the newline character.
-         */
-        size_t println(unsigned long prnt_unsigned_long, int base = DEC);
-
-        /**
-         * @brief Prints a double value followed by a newline character.
-         *
-         * @param prnt_double The double value to be printed.
-         * @param digits The number of decimal places to display. By default, it is set to 2.
-         * @return The number of characters that were printed.
-         */
-        size_t println(double prnt_double, int digits = 2);
-
-        /**
-         * @brief Prints the given printable object followed by a newline character.
-         *
-         * @param prnt_object The printable object to print.
-         * @return The number of characters printed.
-         */
-        size_t println(const Printable &prnt_object);
-
-        /**
-         * @brief Prints a new line character followed by a carriage return.
-         *
-         * @return size_t The number of characters printed (always 2).
-         *
-         * @details This function prints a new line character ('\\n') followed by a carriage return character ('\\r').
-         * The newline character creates a new line in the output, and the carriage return character moves the cursor
-         * to the beginning of the current line.
-         */
-        virtual size_t println();
+        int availableForWrite() override = 0;
 
         /**
          * @brief Flushes the output of the function and waits for completion.
@@ -470,8 +153,11 @@ namespace Stm32Common {
          * @note This function does not have a return value.
          */
         virtual void flush() = 0;
-    };
 
+        using BasePrint::print;
+        using BasePrint::println;
+        using BasePrint::write;
+    };
 }
 
 #endif //LIBSMART_STM32COMMON_PRINT_HPP

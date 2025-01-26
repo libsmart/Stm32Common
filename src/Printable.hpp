@@ -23,7 +23,7 @@
 #include <cstddef>
 
 namespace Stm32Common {
-    class Print;
+    class PrintInterface;
 
     /**
      * The Printable class provides a way for new classes to allow themselves to be printed.
@@ -46,7 +46,9 @@ namespace Stm32Common {
          *
          * @see Print
          */
-        virtual size_t printTo(Print &printObject) const = 0;
+        // virtual size_t printTo(Print &printObject) const = 0;
+
+        virtual size_t printTo(PrintInterface &printObject) const = 0;
     };
 }
 
