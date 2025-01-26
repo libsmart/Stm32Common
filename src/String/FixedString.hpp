@@ -53,7 +53,7 @@ namespace Stm32Common::String {
             return (size() == strlen(rhs)) && (strcmp(c_str(), rhs) == 0);
         }
 
-        virtual operator const char *() const { return c_str(); }
+        virtual explicit operator const char *() const { return c_str(); }
 
         static constexpr std::size_t capacity() { return sizeof(_data); }
 
