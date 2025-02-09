@@ -186,10 +186,11 @@ size_t BasePrint::printf(const char *format, ...) {
 
 size_t BasePrint::vprintf(const char *format, va_list args) {
     uint8_t buffer[LIBSMART_STM32COMMON_VPRINTF_BUFFER_SIZE]{};
-    auto szBuffer = sizeof buffer;
+    constexpr auto szBuffer = sizeof(buffer);
+    constexpr auto lenBuffer = szBuffer - 1;
     int len = ::vsnprintf(reinterpret_cast<char *>(buffer), szBuffer, format, args);
     if (len < 0) return 0;
-    auto bytesToWrite = len < szBuffer ? len : sizeof buffer - 1;
+    const auto bytesToWrite = len < lenBuffer ? len : lenBuffer;
     return write(buffer, bytesToWrite);
 }
 
