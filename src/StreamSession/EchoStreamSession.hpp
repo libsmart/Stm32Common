@@ -6,12 +6,10 @@
 #ifndef LIBSMART_STM32COMMON_STREAMSESSION_ECHOSTREAMSESSION_HPP
 #define LIBSMART_STM32COMMON_STREAMSESSION_ECHOSTREAMSESSION_HPP
 
+
 #include "Helper.hpp"
 #include "StreamRxTx.hpp"
 #include "StreamSessionInterface.hpp"
-
-#define LIBSMART_STM32SHELL_ECHOSTREAMSESSION_BUFFER_SIZE_RX 128
-#define LIBSMART_STM32SHELL_ECHOSTREAMSESSION_BUFFER_SIZE_TX 128
 
 namespace Stm32Common::StreamSession {
     class EchoStreamSession : public StreamSessionInterface,
