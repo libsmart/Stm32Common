@@ -10,9 +10,6 @@
 #include "StreamRxTx.hpp"
 #include "StreamSessionInterface.hpp"
 
-#define LIBSMART_STM32SHELL_GENERALSTREAMSESSION_BUFFER_SIZE_RX 128
-#define LIBSMART_STM32SHELL_GENERALSTREAMSESSION_BUFFER_SIZE_TX 128
-
 namespace Stm32Common::StreamSession {
     class GeneralStreamSession : public StreamSessionInterface,
                               public StreamRxTx<
