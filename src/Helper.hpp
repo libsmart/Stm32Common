@@ -30,6 +30,8 @@ typedef char __FlashStringHelper;
 #define LIBSMART_ARRAYFILL(x) {std::memset(x, 0, sizeof(x));}
 #define LIBSMART_ARRAYSIZE(x) (sizeof(x) / sizeof((x)[0]))
 
+#define LIBSMART_CEIL_DIV(x, y) (((x) + (y) - 1) / (y))
+
 #ifndef __cplusplus
 #include <stdbool.h>
 #define min(a, b) ((a)<(b)?(a):(b))
