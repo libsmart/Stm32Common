@@ -24,7 +24,7 @@ namespace Stm32Common::String {
      * within the predetermined size limit.
      */
     template<std::size_t N>
-    class FixedString : public BasePrint {
+    class FixedString : public BasePrint, public Printable {
         // static constexpr auto N_CORR = N + N % 4 - 1;
         std::array<char, N + 1> _data{}; // +1 for null termination
 
@@ -72,5 +72,9 @@ namespace Stm32Common::String {
         };
 
         int availableForWrite() override { return N - size(); }
+
+        size_t printTo(PrintInterface &printObject) const override {
+            return printObject.print(c_str());
+        }
     };
 }
