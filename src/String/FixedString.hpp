@@ -33,6 +33,8 @@ namespace Stm32Common::String {
 
         explicit FixedString(const char *str) { std::strncpy(_data.data(), str, N); }
 
+        explicit FixedString(const std::string &str) { std::strncpy(_data.data(), str.c_str(), N); }
+
         [[nodiscard]] const char *c_str() const { return _data.data(); }
 
         virtual void set(const char *str) {
@@ -41,11 +43,30 @@ namespace Stm32Common::String {
             _data[N] = '\0';
         }
 
+        template<std::size_t Nrhs>
+        void set(const FixedString<Nrhs> &str) {
+            clear();
+            std::strncpy(_data.data(), str.c_str(), Nrhs);
+            _data[N] = '\0';
+        }
+
+        FixedString &operator=(const char *rhs) {
+            set(rhs);
+            return *this;
+        }
+
+        template<std::size_t Nrhs>
+        FixedString &operator=(const FixedString<Nrhs> &rhs) {
+            set(rhs);
+            return *this;
+        }
+
         virtual const char &operator[](std::size_t idx) const { return _data[idx]; }
 
         virtual char &operator[](std::size_t idx) { return _data[idx]; }
 
-        virtual bool operator==(FixedString &rhs) const {
+        template<std::size_t Nrhs>
+        bool operator==(const FixedString<Nrhs> &rhs) const {
             return (size() == rhs.size()) && (strcmp(c_str(), rhs.c_str()) == 0);
         }
 
