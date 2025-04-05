@@ -32,6 +32,25 @@ typedef char __FlashStringHelper;
 
 #define LIBSMART_CEIL_DIV(x, y) (((x) + (y) - 1) / (y))
 
+#if __EXCEPTIONS
+#include <stdexcept>
+#define LIBSMART_HANDLE_ERROR(fmt, ...)                                          \
+do {                                                                    \
+char buffer[snprintf(nullptr, 0, fmt, __VA_ARGS__) + 1]{};              \
+snprintf(buffer, sizeof(buffer), fmt, __VA_ARGS__);                     \
+log(Stm32ItmLogger::LoggerInterface::Severity::ERROR)->println(buffer); \
+throw std::runtime_error(buffer);                                       \
+} while (0);
+#else
+#define LIBSMART_HANDLE_ERROR(fmt, ...)                                          \
+do {                                                                    \
+char buffer[snprintf(nullptr, 0, fmt, __VA_ARGS__) + 1]{};              \
+snprintf(buffer, sizeof(buffer), fmt, __VA_ARGS__);                     \
+log(Stm32ItmLogger::LoggerInterface::Severity::ERROR)->println(buffer); \
+return ret;                                                             \
+} while (0);
+#endif
+
 #ifndef __cplusplus
 #include <stdbool.h>
 #define min(a, b) ((a)<(b)?(a):(b))
