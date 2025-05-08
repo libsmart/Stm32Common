@@ -38,9 +38,10 @@ namespace Stm32Common {
         constexpr const E &error() const noexcept { return m_error; }
 
         size_t printTo(PrintInterface &printObject) const override {
-            return printObject.printf("%s::%s[%s]::%s = 0x%02x %s\r\n",
+            return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
                                       COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
                                       isError() ? error().apiReturnValue() : 0,
+                                      isError() ? error().apiReturnString() : "",
                                       isError() ? error().message() : ""
             );
         }
@@ -77,9 +78,10 @@ namespace Stm32Common {
         constexpr const E &error() const noexcept { return m_error; }
 
         size_t printTo(PrintInterface &printObject) const override {
-            return printObject.printf("%s::%s[%s]::%s = 0x%02x %s\r\n",
+            return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
                                       COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
                                       isError() ? error().apiReturnValue() : 0,
+                                      isError() ? error().apiReturnString() : "",
                                       isError() ? error().message() : ""
             );
         }

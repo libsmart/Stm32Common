@@ -19,6 +19,14 @@
 
 
 /**
+ * Enable or disable the inclusion of error strings
+ */
+#undef LIBSMART_ENABLE_ERROR_STRINGS
+#define LIBSMART_ENABLE_ERROR_STRINGS
+
+
+
+/**
  * Enable or disable the use of std::function.
  */
 #undef LIBSMART_ENABLE_STD_FUNCTION
