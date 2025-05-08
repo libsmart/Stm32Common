@@ -30,6 +30,8 @@ namespace Stm32Common::Hash::FNV1a {
     constexpr uint32_t FNV_OFFSET_BASIS = 2166136261u;
     constexpr uint32_t FNV_PRIME = 16777619u;
 
+    using fnv1a32_t = uint32_t;
+
     /**
      * Calculates a 32-bit FNV-1a hash for a given null-terminated string.
      *
@@ -43,7 +45,7 @@ namespace Stm32Common::Hash::FNV1a {
      * @param str A pointer to a null-terminated string to be hashed.
      * @return The 32-bit hash value corresponding to the input string.
      */
-    constexpr uint32_t hash(const char* str) {
+    constexpr fnv1a32_t hash(const char* str) {
         uint32_t hash = FNV_OFFSET_BASIS;
         while (*str) {
             hash ^= static_cast<uint8_t>(*str++);
@@ -63,7 +65,7 @@ namespace Stm32Common::Hash::FNV1a {
      * @param length The length of the input string.
      * @return The 32-bit hash value corresponding to the input string and its length.
      */
-    constexpr uint32_t hash(const char* str, size_t length) {
+    constexpr fnv1a32_t hash(const char* str, size_t length) {
         uint32_t hash = FNV_OFFSET_BASIS;
         for (size_t i = 0; i < length; ++i) {
             hash ^= static_cast<uint8_t>(str[i]);
