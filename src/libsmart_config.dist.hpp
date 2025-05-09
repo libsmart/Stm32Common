@@ -88,6 +88,22 @@
 
 
 /**
+ * Set the maximum number of GenericBounce callback instances.
+ */
+#undef LIBSMART_GENERIC_BOUNCE_MAX_INSTANCES
+#define LIBSMART_GENERIC_BOUNCE_MAX_INSTANCES 16
+
+
+
+/**
+ * Set the maximum number of nested GenericBounce callbacks.
+ */
+#undef LIBSMART_GENERIC_BOUNCE_MAX_NESTED_DEPTH
+#define LIBSMART_GENERIC_BOUNCE_MAX_NESTED_DEPTH 4
+
+
+
+/**
  * Enable or disable the use of ThreadX.
  */
 #undef LIBSMART_USE_THREADX
