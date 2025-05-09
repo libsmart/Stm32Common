@@ -25,7 +25,7 @@ namespace Stm32Common {
     template<typename Ret, typename... Args>
     class GenericBounce : public GenericCallback<Ret, Args...> {
     public:
-        using BounceFn = typename GenericCallback<Ret, Args...>::BounceFn;
+        using BounceFn = Ret (*)(Args...);
 
         /**
          * Constructor of the GenericBounce class. Registers the current instance
