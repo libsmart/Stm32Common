@@ -24,7 +24,8 @@
 #undef LIBSMART_ENABLE_ERROR_STRINGS
 #define LIBSMART_ENABLE_ERROR_STRINGS
 
-
+#undef LIBSMART_ENABLE_ERROR_HASHES
+#define LIBSMART_ENABLE_ERROR_HASHES
 
 /**
  * Enable or disable the use of std::function.
