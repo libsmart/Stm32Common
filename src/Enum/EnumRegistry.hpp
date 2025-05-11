@@ -67,22 +67,23 @@ namespace Stm32Common {
     template<typename EntryT>
     class RegistryView {
     public:
-        constexpr RegistryView() : _entry(nullptr) {}
-        constexpr RegistryView(const EntryT* entry) : _entry(entry) {}
+        constexpr RegistryView() = delete;
+        constexpr RegistryView(const EntryT &entry) : _entry(entry) {}
+        // constexpr RegistryView(const EntryT *entry) : _entry(&entry) {}
 
-        constexpr const EntryT* get() const { return _entry; }
+        constexpr const EntryT &get() const { return _entry; }
 
         constexpr explicit operator bool() const { return _entry != nullptr; }
         constexpr bool valid() const { return _entry != nullptr; }
 
         // Generischer Feldzugriff (nur wenn Felder vorhanden sind)
-        constexpr auto id() const { return _entry->id; }
-        constexpr auto code() const { return _entry->apiId; }
-        constexpr const char* name() const { return _entry->name; }
-        constexpr const char* description() const { return _entry->description; }
+        constexpr auto id() const { return _entry.id; }
+        constexpr auto apiId() const { return _entry.apiId; }
+        constexpr const char* name() const { return _entry.name; }
+        constexpr const char* description() const { return _entry.description; }
 
     private:
-        const EntryT* _entry;
+        const EntryT &_entry;
     };
 
 

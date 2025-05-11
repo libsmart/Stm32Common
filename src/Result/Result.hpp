@@ -38,12 +38,17 @@ namespace Stm32Common {
         constexpr const E &error() const noexcept { return m_error; }
 
         size_t printTo(PrintInterface &printObject) const override {
-            return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
-                                      COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
-                                      isError() ? error().apiReturnValue() : 0,
-                                      isError() ? error().apiReturnString() : "",
-                                      isError() ? error().message() : ""
-            );
+            const auto sz = printObject.printf("%s::%s[%s]::%s", COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME);
+            if (isOk()) {
+                return sz + printObject.print(value());
+            }
+            return sz + printObject.print(error());
+            // return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
+            //                           COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
+            //                           isError() ? error().apiReturnValue() : 0,
+            //                           isError() ? error().apiReturnString() : "",
+            //                           isError() ? error().message() : ""
+            // );
         }
 
     private:
@@ -78,12 +83,14 @@ namespace Stm32Common {
         constexpr const E &error() const noexcept { return m_error; }
 
         size_t printTo(PrintInterface &printObject) const override {
-            return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
-                                      COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
-                                      isError() ? error().apiReturnValue() : 0,
-                                      isError() ? error().apiReturnString() : "",
-                                      isError() ? error().message() : ""
-            );
+            auto sz = printObject.printf("%s::%s[%s]::%s", COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME);
+            return sz + printObject.print(error());
+            // return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
+            //                           COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
+            //                           isError() ? error().apiReturnValue() : 0,
+            //                           isError() ? error().apiReturnString() : "",
+            //                           isError() ? error().message() : ""
+            // );
         }
 
     private:
