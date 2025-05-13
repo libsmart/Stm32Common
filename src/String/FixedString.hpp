@@ -76,7 +76,7 @@ namespace Stm32Common::String {
 
         virtual explicit operator const char *() const { return c_str(); }
 
-        static constexpr std::size_t capacity() { return sizeof(_data); }
+        static constexpr std::size_t capacity() { return sizeof(_data) - 1; }
 
         [[nodiscard]] virtual std::size_t size() const { return strlen(_data.data()); }
 
