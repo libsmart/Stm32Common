@@ -94,6 +94,11 @@ namespace Stm32Common::String {
 
         int availableForWrite() override { return N - size(); }
 
+
+        void copyTo(char *buffer, const size_t size) const {
+            std::strncpy(buffer, c_str(), std::min(size, N));
+        }
+
         size_t printTo(PrintInterface &printObject) const override {
             return printObject.print(c_str());
         }
