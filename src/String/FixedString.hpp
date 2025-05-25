@@ -27,7 +27,8 @@ namespace Stm32Common::String {
     class FixedString : public BasePrint, public Printable {
         // static constexpr auto N_CORR = N + N % 4 - 1;
         std::array<char, N + 1> _data{}; // +1 for null termination
-
+        static constexpr std::size_t ZERO_SIZE = 0;
+        inline static char zeroChar = '\0';
     public:
         FixedString() = default;
 
@@ -61,9 +62,9 @@ namespace Stm32Common::String {
             return *this;
         }
 
-        virtual const char &operator[](std::size_t idx) const { return _data[idx]; }
+        virtual const char &operator[](std::size_t idx) const { return (idx < N) ? _data[idx] : (zeroChar='\0'); }
 
-        virtual char &operator[](std::size_t idx) { return _data[idx]; }
+        virtual char &operator[](std::size_t idx) { return (idx < N) ? _data[idx] : (zeroChar='\0'); }
 
         template<std::size_t Nrhs>
         bool operator==(const FixedString<Nrhs> &rhs) const {
@@ -84,15 +85,15 @@ namespace Stm32Common::String {
 
         virtual void clear() { fill('\0'); }
 
-        [[nodiscard]] constexpr bool empty() const noexcept { return size() == 0; }
+        [[nodiscard]] constexpr bool empty() const noexcept { return size() == ZERO_SIZE; }
 
         size_t write(uint8_t data) override {
-            if (availableForWrite() == 0) return 0;
+            if (availableForWrite() == 0) return ZERO_SIZE;
             _data[strlen(c_str())] = data;
             return 1;
         };
 
-        int availableForWrite() override { return N - size(); }
+        int availableForWrite() override { return std::max(N - size(), ZERO_SIZE); }
 
 
         void copyTo(char *buffer, const size_t size) const {
