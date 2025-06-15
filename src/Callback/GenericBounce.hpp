@@ -96,14 +96,25 @@ namespace Stm32Common {
                 }
             }
 
-            Ret result{};
             if (currentInstance && currentInstance->function_) {
-                result = currentInstance->function_(currentInstance->context_, args...);
+                if constexpr (std::is_void_v<Ret>) {
+                    currentInstance->function_(currentInstance->context_, args...);
+                    --s_nestingDepth;
+                    return;
+                } else {
+                    Ret result = currentInstance->function_(currentInstance->context_, args...);
+                    --s_nestingDepth;
+                    return result;
+                }
             }
 
             --s_nestingDepth;
 
-            return result;
+            if constexpr (std::is_void_v<Ret>) {
+                return;
+            } else {
+                return Ret{};
+            }
         }
 
         /**
