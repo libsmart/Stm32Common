@@ -34,6 +34,8 @@ namespace Stm32Common::String {
 
         explicit FixedString(const char *str) { std::strncpy(_data.data(), str, N); }
 
+        explicit FixedString(const char *str, const size_t sz) { std::strncpy(_data.data(), str, std::min(sz, N)); }
+
         explicit FixedString(const std::string &str) { std::strncpy(_data.data(), str.c_str(), N); }
 
         [[nodiscard]] const char *c_str() const { return _data.data(); }
