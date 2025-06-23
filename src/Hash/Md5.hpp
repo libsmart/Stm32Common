@@ -16,8 +16,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef LIBSMART_STM32COMMON_HASH_MD5_HPP
-#define LIBSMART_STM32COMMON_HASH_MD5_HPP
+#pragma once
 
 #include <cstdint>
 #include <cstring>
@@ -100,7 +99,7 @@ namespace Stm32Common::Hash {
 
             // after accounting for the string and the addition byte added above, add
             // enough padding to fill out to the end of the final 512-bit chunk
-            memset(
+            std::memset(
                 &buffer[string_length + 1],
                 0,
                 chunks * MD5_CHUNK_BYTES - (string_length + 1)
@@ -217,5 +216,3 @@ namespace Stm32Common::Hash {
         static constexpr uint32_t MD5_MIN_PADDING_BYTES = 9;
     };
 }
-
-#endif
