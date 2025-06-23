@@ -101,7 +101,14 @@ namespace Stm32Common::MCU {
          * @return Size of the flash in bytes.
          */
         static size_t getFlashSize() {
-            return (*reinterpret_cast<const uint16_t *>(FLASHSIZE_BASE)) * 1024;
+            size_t sz = 0;
+#if defined(FLASHSIZE_BASE)
+            sz = (*reinterpret_cast<const uint16_t *>(FLASHSIZE_BASE)) * 1024;
+#endif
+#if defined(FLASH_BASE)
+            sz = (*reinterpret_cast<const uint16_t *>(FLASH_BASE)) * 1024;
+#endif
+            return sz;
         }
     };
 }
