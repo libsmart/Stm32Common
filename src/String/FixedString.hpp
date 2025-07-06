@@ -83,7 +83,7 @@ namespace Stm32Common::String {
 
         [[nodiscard]] virtual std::size_t size() const { return strlen(_data.data()); }
 
-        virtual void fill(const char &c) { _data.fill(c); }
+        virtual void fill(const char &c) { _data.fill(c); _data[N] = '\0'; }
 
         virtual void clear() { fill('\0'); }
 
