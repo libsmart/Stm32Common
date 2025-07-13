@@ -41,6 +41,7 @@ namespace Stm32Common::String {
         [[nodiscard]] const char *c_str() const { return _data.data(); }
 
         virtual void set(const char *str) {
+            if (str == nullptr) return;
             clear();
             std::strncpy(_data.data(), str, N);
             _data[N] = '\0';
