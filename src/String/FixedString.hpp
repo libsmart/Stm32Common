@@ -106,5 +106,15 @@ namespace Stm32Common::String {
         size_t printTo(PrintInterface &printObject) const override {
             return printObject.print(c_str());
         }
+
+        char first() { return _data[0]; }
+        char last() { return _data[size() - 1]; }
+
+        char remove(const size_t idx) {
+            if (idx >= size()) return zeroChar;
+            const char c = _data[idx];
+            std::memmove(&_data[idx], &_data[idx + 1], (size() - idx) + 1);
+            return c;
+        }
     };
 }
