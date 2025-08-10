@@ -75,6 +75,12 @@ namespace Stm32Common::String {
         }
 
         virtual bool operator==(const char *rhs) const {
+            if (rhs == nullptr) return false;
+            return (size() == strlen(rhs)) && (strcmp(c_str(), rhs) == 0);
+        }
+
+        template<std::size_t Nrhs>
+        bool operator==(const char(&rhs)[Nrhs]) const {
             return (size() == strlen(rhs)) && (strcmp(c_str(), rhs) == 0);
         }
 
@@ -107,8 +113,8 @@ namespace Stm32Common::String {
             return printObject.print(c_str());
         }
 
-        char first() { return _data[0]; }
-        char last() { return _data[size() - 1]; }
+        char first() const { return _data[0]; }
+        char last() const { return _data[size() - 1]; }
 
         char remove(const size_t idx) {
             if (idx >= size()) return zeroChar;
@@ -116,5 +122,104 @@ namespace Stm32Common::String {
             std::memmove(&_data[idx], &_data[idx + 1], (size() - idx) + 1);
             return c;
         }
+
+        /**
+         * @brief Checks if the FixedString instance starts with the specified string view.
+         *
+         * This method determines whether the FixedString contains the provided string view
+         * as a prefix. The comparison is case-sensitive. If the size of the string view
+         * is greater than the size of the FixedString, the method will return false.
+         *
+         * @param sv A string view representing the prefix to be checked for.
+         * @return True if the FixedString starts with the specified prefix, otherwise false.
+         */
+        bool startsWith(const std::string_view sv) const {
+            if (sv.size() > size()) return false;
+            return std::char_traits<char>::compare(_data.data(), sv.data(), sv.size()) == 0;
+        }
+
+        /**
+         * @brief Checks if the FixedString instance ends with the specified string view.
+         *
+         * This method determines whether the FixedString contains the provided string view
+         * as a suffix. The comparison is case-sensitive. If the size of the string view
+         * is greater than the size of the FixedString, the method will return false.
+         *
+         * @param sv A string view representing the suffix to be checked for.
+         * @return True if the FixedString ends with the specified suffix, otherwise false.
+         */
+        bool endsWith(const std::string_view sv) const {
+            if (sv.size() > size()) return false;
+            return std::char_traits<char>::compare(&_data[size() - sv.size()], sv.data(), sv.size()) == 0;
+        }
+
+        std::size_t find(const std::string_view sv) const {
+            if (sv.empty()) return 0;
+            const std::size_t selfSize = size();
+            if (sv.size() > selfSize) return std::string_view::npos;
+            const std::string_view haystack{_data.data(), selfSize};
+            return haystack.find(sv);
+        }
+
+        bool contains(const std::string_view sv) const {
+            return find(sv) != std::string_view::npos;
+        }
+
+        /**
+         * @brief Removes leading characters from the string that match any character in the specified string view.
+         *
+         * This function trims leading characters from the FixedString instance, where the character matches
+         * any character found in the provided string view. If the string view is empty, no trimming occurs.
+         *
+         * @param sv A string view containing the characters to be trimmed from the beginning of the string.
+         */
+        void ltrim(const std::string_view sv) {
+            if (sv.empty()) return;
+
+            const std::size_t len = size();
+            std::size_t first_keep = 0;
+
+            while (first_keep < len && sv.find(_data[first_keep]) != std::string_view::npos) {
+                ++first_keep;
+            }
+
+            if (first_keep > 0) {
+                std::memmove(&_data[0], &_data[first_keep], (len - first_keep) + 1);
+            }
+        }
+
+        /**
+         * @brief Removes trailing characters from the string that match any character in the specified string view.
+         *
+         * This function trims trailing characters from the FixedString instance, where the character matches
+         * any character found in the provided string view. If the string view is empty, no trimming occurs.
+         *
+         * @param sv A string view containing the characters to be trimmed from the end of the string.
+         */
+        void rtrim(const std::string_view sv) {
+            if (sv.empty()) return;
+
+            const std::size_t sz = size();
+            std::size_t len = sz;
+            while (len > 0 && sv.find(_data[len - 1]) != std::string_view::npos) {
+                --len;
+            }
+
+            if (len < sz) {
+                _data[len] = '\0';
+                std::fill(_data.begin() + len + 1, _data.end(), '\0');
+            }
+        }
+
+        void trim(const std::string_view sv) { ltrim(sv); rtrim(sv); }
+
+        void ltrim() { ltrim(trim_default); }
+
+        void rtrim() { rtrim(trim_default); }
+
+        void trim() { trim(trim_default); }
+
+    private:
+        static constexpr std::string_view trim_default = " \t\r\n";
     };
 }
