@@ -33,6 +33,8 @@ namespace Stm32Common::String {
     public:
         FixedString() = default;
 
+        explicit FixedString(const char *str) { FixedString::set(str); }
+
         explicit FixedString(const std::string_view str) { FixedString::set(str); }
 
         FixedString(const char *str, const size_t sz) { FixedString::set(std::string_view(str, sz)); }
@@ -77,22 +79,32 @@ namespace Stm32Common::String {
         virtual explicit operator const char *() const { return c_str(); }
 
         /**
-         * @brief Sets the content of the FixedString to the given string.
+         * @brief Sets the content of the fixed string using a given `std::string_view`.
          *
-         * Replaces the current content of the FixedString with the provided
-         * string. If the provided string exceeds the FixedString's capacity,
-         * it is truncated to fit. The FixedString is cleared before the new
-         * content is copied.
+         * This method clears the existing content of the fixed string and replaces it
+         * with the content from the provided `std::string_view`, up to the capacity of
+         * the fixed string.
          *
-         * @param str The string to set as the content, provided as a
-         *            `std::string_view`.
-         *
-         * @return A reference to the current FixedString.
+         * @param str The `std::string_view` containing the new content to be set.
+         * @return A reference to the updated `FixedString` instance.
          */
         virtual FixedString &set(const std::string_view str) {
             clear();
             str.copy(_data.data(), std::min(str.size(), capacity()), 0);
             return *this;
+        }
+
+        /**
+         * @brief Sets the value of the fixed string using a C-style null-terminated string.
+         *
+         * This method updates the contents of the fixed string to match the provided input.
+         *
+         * @param str A pointer to a null-terminated string. If the pointer is null, no change is made.
+         * @return A reference to the updated FixedString instance.
+         */
+        virtual FixedString &set(const char *str) {
+            if (str == nullptr) return *this;
+            return set(std::string_view{str});
         }
 
         /**
