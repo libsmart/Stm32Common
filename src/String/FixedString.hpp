@@ -508,6 +508,50 @@ namespace Stm32Common::String {
          */
         virtual FixedString &trim() { return trim(trim_default); }
 
+        /**
+         * @brief Replaces occurrences of a specific substring within the fixed string.
+         *
+         * This method searches for all occurrences of the specified substring (`needle`)
+         * and replaces them with another substring (`subject`). If the replacement
+         * substring exceeds the available capacity of the FixedString, the operation
+         * stops prematurely.
+         *
+         * - If `needle` is empty, no modifications are made, and the function returns immediately.
+         * - Memory adjustments are performed for size differences between `needle` and `subject`.
+         *
+         * @param needle The substring to search for and replace.
+         * @param subject The substring to replace each occurrence of `needle`.
+         * @return A reference to the modified `FixedString` object.
+         */
+        virtual FixedString &replace(const std::string_view needle, const std::string_view subject) {
+            if (needle.empty()) return *this;
+
+            std::size_t pos = 0;
+            std::size_t curr_size = size();
+
+            while ((pos = find(needle)) != std::string_view::npos) {
+                const std::size_t remaining_size = curr_size - pos - needle.size();
+                const std::size_t available_space = capacity() - pos;
+
+                if (subject.size() > available_space) {
+                    break;
+                }
+
+                if (subject.size() != needle.size()) {
+                    std::memmove(
+                        &_data[pos + subject.size()],
+                        &_data[pos + needle.size()],
+                        remaining_size + 1
+                    );
+                }
+
+                std::memcpy(&_data[pos], subject.data(), subject.size());
+                curr_size = curr_size - needle.size() + subject.size();
+            }
+
+            return *this;
+        }
+
     private:
         static constexpr std::string_view trim_default = " \t\r\n";
     };
