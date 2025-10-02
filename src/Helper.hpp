@@ -34,17 +34,17 @@ typedef char __FlashStringHelper;
 
 #if __EXCEPTIONS
 #include <stdexcept>
-#define LIBSMART_HANDLE_ERROR(fmt, ...)                                          \
+#define LIBSMART_HANDLE_ERROR(fmt, ...)                                 \
 do {                                                                    \
-char buffer[snprintf(nullptr, 0, fmt, __VA_ARGS__) + 1]{};              \
+char buffer[snprintf(nullptr, 0, fmt, __VA_ARGS__) + 1];                \
 snprintf(buffer, sizeof(buffer), fmt, __VA_ARGS__);                     \
 log(Stm32ItmLogger::LoggerInterface::Severity::ERROR)->println(buffer); \
 throw std::runtime_error(buffer);                                       \
 } while (0);
 #else
-#define LIBSMART_HANDLE_ERROR(fmt, ...)                                          \
+#define LIBSMART_HANDLE_ERROR(fmt, ...)                                 \
 do {                                                                    \
-char buffer[snprintf(nullptr, 0, fmt, __VA_ARGS__) + 1]{};              \
+char buffer[snprintf(nullptr, 0, fmt, __VA_ARGS__) + 1];                \
 snprintf(buffer, sizeof(buffer), fmt, __VA_ARGS__);                     \
 log(Stm32ItmLogger::LoggerInterface::Severity::ERROR)->println(buffer); \
 return ret;                                                             \
