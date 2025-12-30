@@ -4,15 +4,9 @@
  */
 
 #pragma once
-#include "PrintInterface.hpp"
 
 namespace Stm32Common {
-    class ResultBase : public Printable {
-    public:
-        const char *COMPONENT_NAME{};
-        const char *CLASS_NAME{};
-        const char *INSTANCE_NAME{};
-        const char *FUNCTION_NAME{};
+    class ResultBase {
     };
 
     /**
@@ -36,20 +30,6 @@ namespace Stm32Common {
 
         constexpr const T &value() const noexcept { return m_value; }
         constexpr const E &error() const noexcept { return m_error; }
-
-        size_t printTo(PrintInterface &printObject) const override {
-            const auto sz = printObject.printf("%s::%s[%s]::%s", COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME);
-            if (isOk()) {
-                return sz + printObject.print(value());
-            }
-            return sz + printObject.print(error());
-            // return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
-            //                           COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
-            //                           isError() ? error().apiReturnValue() : 0,
-            //                           isError() ? error().apiReturnString() : "",
-            //                           isError() ? error().message() : ""
-            // );
-        }
 
     private:
         explicit Result(const T &value) noexcept : m_value(value), m_error(), m_is_ok(true) { ; }
@@ -81,17 +61,6 @@ namespace Stm32Common {
         constexpr bool isError() const noexcept { return !m_is_ok; }
 
         constexpr const E &error() const noexcept { return m_error; }
-
-        size_t printTo(PrintInterface &printObject) const override {
-            auto sz = printObject.printf("%s::%s[%s]::%s", COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME);
-            return sz + printObject.print(error());
-            // return printObject.printf("%s::%s[%s]::%s = 0x%02x %s %s\r\n",
-            //                           COMPONENT_NAME, CLASS_NAME, INSTANCE_NAME, FUNCTION_NAME,
-            //                           isError() ? error().apiReturnValue() : 0,
-            //                           isError() ? error().apiReturnString() : "",
-            //                           isError() ? error().message() : ""
-            // );
-        }
 
     private:
         constexpr Result(bool ok) noexcept : m_error(), m_is_ok(ok) { ; }
