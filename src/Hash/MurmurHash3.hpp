@@ -77,25 +77,22 @@ namespace Stm32Common::Hash {
          * @param key A pointer to the character array to be hashed, representing the input key.
          * @param len The length of the input key in bytes.
          * @param h1 The initial hash value (seed), which is updated during the processing.
-         * @param i The index at which to start processing the key within the character array.
-         *          Defaults to 0 and increments as chunks are processed iteratively.
          * @return The 32-bit hash value after processing the key up to the specified length.
          */
-        static constexpr uint32_t murmur3_body(const char *key, size_t len, uint32_t h1, size_t i = 0) {
-            const uint32_t c1 = 0xcc9e2d51;
-            const uint32_t c2 = 0x1b873593;
+        static constexpr uint32_t murmur3_body(const char *key, const size_t len, uint32_t h1) {
+            size_t nblocks = len / 4;
+            for (size_t i = 0; i < nblocks; i++) {
+                uint32_t k1 = get_block(key, i * 4);
 
-            return i + 4 <= len
-                       ? murmur3_body(key, len,
-                                      rotl32(h1 ^ ([&] {
-                                          uint32_t k1 = get_block(key, i);
-                                          k1 *= c1;
-                                          k1 = rotl32(k1, 15);
-                                          k1 *= c2;
-                                          return k1;
-                                      })(), 13) * 5 + 0xe6546b64,
-                                      i + 4)
-                       : h1;
+                k1 *= 0xcc9e2d51;
+                k1 = rotl32(k1, 15);
+                k1 *= 0x1b873593;
+
+                h1 ^= k1;
+                h1 = rotl32(h1, 13);
+                h1 = h1 * 5 + 0xe6546b64;
+            }
+            return h1;
         }
 
         /**
