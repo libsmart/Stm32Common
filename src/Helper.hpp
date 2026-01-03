@@ -9,7 +9,6 @@
 #include <libsmart_config.hpp>
 #include <main.h>
 
-// #define F(x) x
 typedef char __FlashStringHelper;
 #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(string_literal))
 #define BREAKPOINT __asm volatile("BKPT #0");
@@ -20,12 +19,12 @@ typedef char __FlashStringHelper;
 #define LIBSMART_REVERSE_BYTES(pData, nDataSize) \
   {unsigned char swap, *lo = ((unsigned char *)(pData)), *hi = ((unsigned char *)(pData)) + (nDataSize) - 1; \
   while (lo < hi) { swap = *lo; *lo++ = *hi; *hi-- = swap; }}
-#define LIBSMART_MS_TO_US(t) (t * 1000)
-#define LIBSMART_SECONDS_TO_MS(t) (t * 1000)
-#define LIBSMART_MINUTES_TO_MS(t) LIBSMART_SECONDS_TO_MS(t * 60)
-#define LIBSMART_HOURS_TO_MS(t) LIBSMART_MINUTES_TO_MS(t * 60)
-#define LIBSMART_DAYS_TO_MS(t) LIBSMART_HOURS_TO_MS(t * 24)
-#define LIBSMART_WEEKS_TO_MS(t) LIBSMART_DAYS_TO_MS(t * 7)
+#define LIBSMART_MS_TO_US(t) ((t) * 1000UL)
+#define LIBSMART_SECONDS_TO_MS(t) ((t) * 1000UL)
+#define LIBSMART_MINUTES_TO_MS(t) LIBSMART_SECONDS_TO_MS((t) * 60UL)
+#define LIBSMART_HOURS_TO_MS(t) LIBSMART_MINUTES_TO_MS((t) * 60UL)
+#define LIBSMART_DAYS_TO_MS(t) LIBSMART_HOURS_TO_MS((t) * 24UL)
+#define LIBSMART_WEEKS_TO_MS(t) LIBSMART_DAYS_TO_MS((t) * 7UL)
 
 #define LIBSMART_ARRAYFILL(x) {std::memset(x, 0, sizeof(x));}
 #define LIBSMART_ARRAYSIZE(x) (sizeof(x) / sizeof((x)[0]))
