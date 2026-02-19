@@ -59,7 +59,7 @@ size_t BasePrint::printNumber(unsigned long n, uint8_t base) {
         n /= base;
 
         *--str = c < 10 ? c + '0' : c + 'A' - 10;
-    } while(n);
+    } while (n);
 
     return write(str);
 }
@@ -69,26 +69,25 @@ size_t BasePrint::printFloat(double number, uint8_t digits) {
 
     if (isnan(number)) return print("nan");
     if (isinf(number)) return print("inf");
-    if (number > 4294967040.0) return print ("ovf");  // constant determined empirically
-    if (number <-4294967040.0) return print ("ovf");  // constant determined empirically
+    if (number > 4294967040.0) return print("ovf"); // constant determined empirically
+    if (number < -4294967040.0) return print("ovf"); // constant determined empirically
 
     // Handle negative numbers
-    if (number < 0.0)
-    {
+    if (number < 0.0) {
         n += print('-');
         number = -number;
     }
 
     // Round correctly so that print(1.999, 2) prints as "2.00"
     double rounding = 0.5;
-    for (uint8_t i=0; i<digits; ++i)
+    for (uint8_t i = 0; i < digits; ++i)
         rounding /= 10.0;
 
     number += rounding;
 
     // Extract the integer part of the number and print it
-    unsigned long int_part = (unsigned long)number;
-    double remainder = number - (double)int_part;
+    unsigned long int_part = (unsigned long) number;
+    double remainder = number - (double) int_part;
     n += print(int_part);
 
     // Print the decimal point, but only if there are digits beyond
@@ -97,10 +96,9 @@ size_t BasePrint::printFloat(double number, uint8_t digits) {
     }
 
     // Extract digits from the remainder one at a time
-    while (digits-- > 0)
-    {
+    while (digits-- > 0) {
         remainder *= 10.0;
-        unsigned int toPrint = (unsigned int)(remainder);
+        unsigned int toPrint = (unsigned int) (remainder);
         n += print(toPrint);
         remainder -= toPrint;
     }
@@ -145,9 +143,6 @@ size_t BasePrint::print(unsigned int prnt_unsigned_int, int base) {
 }
 
 size_t BasePrint::print(long prnt_long, int base) {
-    if (base == 0) {
-        return write(prnt_long);
-    }
     if (base == DEC) {
         if (prnt_long < 0) {
             int t = print('-');
@@ -156,12 +151,11 @@ size_t BasePrint::print(long prnt_long, int base) {
         }
         return printNumber(prnt_long, DEC);
     }
-    return printNumber(prnt_long, base);
+    return printNumber(prnt_long, (base < 2) ? 10 : base);
 }
 
 size_t BasePrint::print(unsigned long prnt_unsigned_long, int base) {
-    if (base == 0) return write(prnt_unsigned_long);
-    else return printNumber(prnt_unsigned_long, base);
+    return printNumber(prnt_unsigned_long, (base < 2) ? 10 : base);
 }
 
 size_t BasePrint::print(double prnt_double, int digits) {
@@ -259,4 +253,15 @@ size_t BasePrint::println(const Printable &prnt_object) {
 }
 
 size_t BasePrint::println() { return write("\r\n"); }
+
+size_t BasePrint::printBinary(const uint64_t value, const uint8_t bits, const uint8_t groupsize) {
+    size_t printed{};
+
+    for (int8_t currentBit = bits - 1; currentBit >= 0; currentBit--) {
+        printed += print(((value >> currentBit) & 1) ? '1' : '0');
+        if ((currentBit % groupsize) == 0) printed += print(' ');
+    }
+
+    return printed;
+}
 

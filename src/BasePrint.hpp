@@ -199,7 +199,7 @@ namespace Stm32Common {
          * @param base The base to use for conversion (default is DEC).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(unsigned char prnt_unsigned_char, int base) override;
+        size_t print(unsigned char prnt_unsigned_char, int base=10) override;
 
         /**
          * @brief Prints an integer to the underlying device.
@@ -208,7 +208,7 @@ namespace Stm32Common {
          * @param base The base to use for conversion (default is DEC).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(int prnt_int, int base) override;
+        size_t print(int prnt_int, int base=10) override;
 
         /**
          * @brief Prints an unsigned integer to the underlying device.
@@ -217,7 +217,7 @@ namespace Stm32Common {
          * @param base The base to use for conversion (default is DEC).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(unsigned int prnt_unsigned_int, int base) override;
+        size_t print(unsigned int prnt_unsigned_int, int base=10) override;
 
         /**
          * @brief Prints a long integer to the underlying device.
@@ -226,7 +226,7 @@ namespace Stm32Common {
          * @param base The base to use for conversion (default is 10).
          * @return The number of bytes written to the underlying device.
          */
-        size_t print(long prnt_long, int base) override;
+        size_t print(long prnt_long, int base=10) override;
 
         /**
          * @brief Prints an unsigned long integer to the underlying device.
@@ -235,7 +235,7 @@ namespace Stm32Common {
          * @param base The base to use for conversion (default is 10).
          * @return The number of characters printed.
          */
-        size_t print(unsigned long prnt_unsigned_long, int base) override;
+        size_t print(unsigned long prnt_unsigned_long, int base=10) override;
 
         /**
          * @brief Prints a floating-point number to the underlying device.
@@ -391,6 +391,20 @@ namespace Stm32Common {
          * to the beginning of the current line.
          */
         size_t println() override;
+
+        /**
+         * @brief Prints the binary representation of a given value, grouping bits by a specified size.
+         *
+         * This function outputs the binary representation of the `value` parameter, displaying only
+         * the number of bits specified by the `bits` parameter. The output can be formatted with
+         * groups of bits separated by a space, determined by the `groupsize` parameter.
+         *
+         * @param value The numeric value to be converted and printed in binary format.
+         * @param bits The number of significant bits to display from the binary representation of the value.
+         * @param groupsize The size of each group of bits, used to insert separators in the binary output.
+         * @return The number of characters printed to the output, including spaces for grouping.
+         */
+        size_t printBinary(uint64_t value, uint8_t bits, uint8_t groupsize);
     };
 }
 
