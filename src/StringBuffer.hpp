@@ -7,6 +7,7 @@
 #define LIBSMART_STM32COMMON_STRINGBUFFER_HPP
 
 #include <algorithm>
+#include <atomic>
 #include <libsmart_config.hpp>
 #include <cstddef>
 #include "Helper.hpp"
@@ -109,9 +110,9 @@ namespace Stm32Common {
         buf_size_t write(const uint8_t *in, buf_size_t strlen) override {
             if (in == nullptr) return 0;
             if (strlen == 0) return 0;
-            if (getRemainingSpace() < strlen) return 0;
-            memcpy(_getWritePointer(), in, strlen);
-            return add(strlen);
+            const auto sz = std::min(strlen, getRemainingSpace());
+            memcpy(_getWritePointer(), in, sz);
+            return add(sz);
         }
 
 #ifdef LIBSMART_ENABLE_PRINTF
@@ -133,6 +134,8 @@ namespace Stm32Common {
 
         int read() override {
             if (getLength() < 1) return -1;
+            assert_param(tail <= head);
+            assert_param(tail <= Size);
             const int ret = buffer[tail];
             remove(1);
             return ret;
@@ -208,9 +211,11 @@ namespace Stm32Common {
          * @return The actual number of bytes removed from the StringBuffer.
          */
         buf_size_t remove(const buf_size_t remove) override {
-            const size_t sz = std::min(getLength(), remove);
+            const buf_size_t sz = std::min(getLength(), remove);
             if (sz == 0) return 0;
             tail += sz;
+            assert_param(tail <= head);
+            assert_param(tail <= Size);
             if (head == tail) {
                 clear();
                 onEmpty();
@@ -333,8 +338,10 @@ namespace Stm32Common {
 #endif
 
         uint8_t buffer[Size] = {};
-        volatile size_t head = 0; // Index of the next free byte for write
-        volatile size_t tail = 0; // Index of the next byte to read
+        std::atomic<size_t> head = 0; // Index of the next free byte for write
+        // volatile size_t head = 0; // Index of the next free byte for write
+        std::atomic<size_t> tail = 0; // Index of the next byte to read
+        // volatile size_t tail = 0; // Index of the next byte to read
     };
 }
 
