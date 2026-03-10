@@ -127,7 +127,7 @@ size_t BasePrint::print(const char *prnt_cstring) {
 }
 
 size_t BasePrint::print(char prnt_char) {
-    return write(prnt_char);
+    return write(&prnt_char, 1);
 }
 
 size_t BasePrint::print(unsigned char prnt_unsigned_char, int base) {
@@ -258,8 +258,8 @@ size_t BasePrint::printBinary(const uint64_t value, const uint8_t bits, const ui
     size_t printed{};
 
     for (int8_t currentBit = bits - 1; currentBit >= 0; currentBit--) {
-        printed += print(((value >> currentBit) & 1) ? '1' : '0');
-        if ((currentBit % groupsize) == 0) printed += print(' ');
+        printed += BasePrint::print(((value >> currentBit) & 1ULL) ? '1' : '0');
+        if ((currentBit % groupsize) == 0) printed += BasePrint::print(' ');
     }
 
     return printed;

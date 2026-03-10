@@ -158,6 +158,16 @@ namespace Stm32Common::String {
         static constexpr std::size_t capacity() { return sizeof(_data) - 1; }
 
         /**
+         * @brief Returns the capacity of the internal buffer in bytes.
+         *
+         * This method returns the size of the internal data buffer at
+         * compile time, including the null terminator.
+         *
+         * @return The capacity of the internal buffer measured in bytes.
+         */
+        static constexpr std::size_t bufferCapacity() { return sizeof(_data); }
+
+        /**
          * @brief Returns the current size of the FixedString.
          *
          * Computes and provides the number of characters currently stored
