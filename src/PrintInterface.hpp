@@ -71,6 +71,12 @@ namespace Stm32Common {
      */
     class PrintInterface {
     public:
+
+        static constexpr int BASE_DEC = 10;
+        static constexpr int BASE_HEX = 16;
+        static constexpr int BASE_OCT = 8;
+        static constexpr int BASE_BIN = 2;
+
         virtual ~PrintInterface() = default;
 
         /**
@@ -169,8 +175,7 @@ namespace Stm32Common {
          * @return The number of bytes written to the underlying device.
          */
         virtual size_t print(unsigned char prnt_unsigned_char, int base) = 0;
-
-        virtual size_t print(unsigned char prnt_unsigned_char) { return print(prnt_unsigned_char, DEC); }
+        // virtual size_t print(unsigned char prnt_unsigned_char) = 0;
 
         /**
          * @brief Prints an integer to the underlying device.
@@ -180,8 +185,7 @@ namespace Stm32Common {
          * @return The number of bytes written to the underlying device.
          */
         virtual size_t print(int prnt_int, int base) = 0;
-
-        virtual size_t print(int prnt_int) { return print(prnt_int, DEC); }
+        // virtual size_t print(int prnt_int) = 0;
 
         /**
          * @brief Prints an unsigned integer to the underlying device.
@@ -191,8 +195,7 @@ namespace Stm32Common {
          * @return The number of bytes written to the underlying device.
          */
         virtual size_t print(unsigned int prnt_unsigned_int, int base) = 0;
-
-        virtual size_t print(unsigned int prnt_unsigned_int) { return print(prnt_unsigned_int, DEC); }
+        // virtual size_t print(unsigned int prnt_unsigned_int) = 0;
 
         /**
          * @brief Prints a long integer to the underlying device.
@@ -202,8 +205,7 @@ namespace Stm32Common {
          * @return The number of bytes written to the underlying device.
          */
         virtual size_t print(long prnt_long, int base) = 0;
-
-        virtual size_t print(long prnt_long) { return print(prnt_long, DEC); }
+        // virtual size_t print(long prnt_long) { return print(prnt_long, BASE_DEC); }
 
         /**
          * @brief Prints an unsigned long integer to the underlying device.
@@ -213,8 +215,7 @@ namespace Stm32Common {
          * @return The number of characters printed.
          */
         virtual size_t print(unsigned long prnt_unsigned_long, int base) = 0;
-
-        virtual size_t print(unsigned long prnt_unsigned_long) { return print(prnt_unsigned_long, DEC); }
+        // virtual size_t print(unsigned long prnt_unsigned_long) { return print(prnt_unsigned_long, BASE_DEC); }
 
         /**
          * @brief Prints a floating-point number to the underlying device.
@@ -224,8 +225,7 @@ namespace Stm32Common {
          * @return The number of characters printed to the standard output.
          */
         virtual size_t print(double prnt_double, int digits) = 0;
-
-        virtual size_t print(double prnt_double) { return print(prnt_double, 2); }
+        // virtual size_t print(double prnt_double) { return print(prnt_double, 2); }
 
         /**
          * @brief Prints the given object using its printTo() function.
