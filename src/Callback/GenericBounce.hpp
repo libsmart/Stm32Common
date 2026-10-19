@@ -43,6 +43,14 @@ namespace Stm32Common {
             }
         }
 
+        GenericBounce(const GenericBounce &) = delete;
+
+        GenericBounce(GenericBounce &&) = delete;
+
+        GenericBounce &operator=(const GenericBounce &) = delete;
+
+        GenericBounce &operator=(GenericBounce &&) = delete;
+
         /**
          * Destructor of the GenericBounce class. Removes the current instance
          * from the static array of instances, ensuring proper cleanup and
